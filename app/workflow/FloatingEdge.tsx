@@ -3,6 +3,7 @@ import { useStore, getBezierPath } from 'reactflow';
 
 import { getEdgeParams } from './utils';
 
+// @ts-ignore
 function FloatingEdge({ id, source, target, markerEnd, style, label }) {
     const sourceNode = useStore(useCallback((store) => store.nodeInternals.get(source), [source]));
     const targetNode = useStore(useCallback((store) => store.nodeInternals.get(target), [target]));

@@ -3,6 +3,7 @@ import { getBezierPath } from 'reactflow';
 
 import { getEdgeParams } from './utils';
 
+// @ts-ignore
 function FloatingConnectionLine({ toX, toY, fromPosition, toPosition, fromNode }) {
     if (!fromNode) {
         return null;
