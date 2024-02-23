@@ -1,15 +1,15 @@
 'use client'
 
-import {title, subtitle} from "@/components/primitives";
+import {subtitle, title} from "../components/primitives"
 import React from "react";
-import {Button, ButtonGroup} from "@nextui-org/react";
+import {Button} from "@nextui-org/react";
 import {useRouter} from 'next/navigation';
 import {useAuth} from "@clerk/nextjs";
 import {Image} from "@nextui-org/react";
 
 export default function Home() {
     const router = useRouter()
-    const {isLoaded, userId, sessionId, getToken} = useAuth();
+    const {isLoaded, userId} = useAuth();
     return (
 
         <section className="flex flex-col items-center justify-center gap-2 py-0 md:py-0">

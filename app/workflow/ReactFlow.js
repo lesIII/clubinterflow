@@ -5,17 +5,13 @@ import ReactFlow, {
     Controls,
     applyEdgeChanges,
     applyNodeChanges,
-    EdgeLabelRenderer,
     addEdge,
     MarkerType,
-    NodeChange,
 } from 'reactflow';
-import EdgeLabel from "reactflow";
 import 'reactflow/dist/style.css';
 
 import FloatingEdge from "./FloatingEdge";
 import FloatingConnectionLine from './FloatingConnectionLine';
-import {createNodesAndEdges} from './utils';
 
 import '@/styles/globals.css';
 

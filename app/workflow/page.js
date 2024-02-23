@@ -1,8 +1,8 @@
 'use client'
 
-import { title } from "@/components/primitives";
+import Flow from "../workflow/ReactFlow";
+import { title } from "../../components/primitives"
 
-import Flow from "@/app/workflow/ReactFlow";
 
 export default function WorkflowPage() {
 	return (

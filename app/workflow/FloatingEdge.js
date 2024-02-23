@@ -13,7 +13,7 @@ function FloatingEdge({ id, source, target, markerEnd, style, label }) {
 
     useEffect(() => {
         if (labelRef.current) {
-            const currentLabelRef = labelRef.current as HTMLElement;
+            const currentLabelRef = labelRef.current;
             setLabelDimensions({
                 width: currentLabelRef.offsetWidth,
                 height: currentLabelRef.offsetHeight,

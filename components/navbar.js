@@ -2,8 +2,6 @@
 
 
 import {Button} from "@nextui-org/button";
-import {Kbd} from "@nextui-org/kbd";
-import {Input} from "@nextui-org/input";
 import {UserButton} from "@clerk/nextjs";
 import {
     Navbar,
@@ -18,23 +16,21 @@ import {
 
 import {link as linkStyles} from "@nextui-org/theme";
 
-import {siteConfig} from "@/config/site";
+import {siteConfig} from "../config/site";
 import NextLink from "next/link";
 import clsx from "clsx";
 
 import React, { useEffect, useState } from "react"; // Add React import
 import { useRouter, usePathname } from "next/navigation"; // Correct import statement for useRouter
 
-import {ThemeSwitch} from "@/components/theme-switch";
+import {ThemeSwitch} from "./theme-switch";
 import {
     InstagramIcon,
     FacebookIcon,
     HeartFilledIcon,
     DriveIcon,
-} from "@/components/icons";
-
-import {Logo} from "@/components/icons";
-
+    Logo
+} from "./icons"
 
 export default function NavbarComponent() {
 
