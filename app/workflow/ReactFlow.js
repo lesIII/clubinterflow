@@ -170,6 +170,7 @@ function Flow() {
 
     // @ts-ignore
     return (
+        <div style={{ overflow: 'hidden', height: '100vh', width: '100vw' }}>
             <ReactFlow nodes={nodes}
                        onNodesChange={onNodesChange}
                        edges={edges}
@@ -182,6 +183,7 @@ function Flow() {
                 <Background/>
                 <Controls/>
             </ReactFlow>
+        </div>
     );
 }
 
