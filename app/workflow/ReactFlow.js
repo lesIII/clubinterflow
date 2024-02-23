@@ -9,7 +9,6 @@ import ReactFlow, {
     addEdge,
     MarkerType,
     NodeChange,
-    EdgeChange, Edge,
 } from 'reactflow';
 import EdgeLabel from "reactflow";
 import 'reactflow/dist/style.css';
@@ -154,21 +153,21 @@ function Flow() {
     const [edges, setEdges] = useState(initialEdges);
 
     const onNodesChange = useCallback(
-        (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
+        (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
         [],
     );
 
     // @ts-ignore
     const onEdgesChange = useCallback(
-        (changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+        (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
         [],
     );
 
     // @ts-ignore
     const onConnect = useCallback(
-        (params: Edge) =>
+        (params) =>
             setEdges((eds) =>
-                addEdge({ ...params, type: 'floating', markerEnd: { type: MarkerType.Arrow }, animated: true }, eds)
+                addEdge({ ...params, type: 'floating', markerEnd: { type: MarkerType.Arrow }, animated: true, }, eds)
             ),
         [setEdges]
     );
