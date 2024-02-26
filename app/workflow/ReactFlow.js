@@ -15,8 +15,6 @@ import FloatingConnectionLine from './FloatingConnectionLine';
 
 import '@/styles/globals.css';
 
-
-
 const edgeTypes = {
     floating: FloatingEdge,
 };
@@ -27,7 +25,6 @@ function Flow() {
     const [edges, setEdges] = useState([]);
 
     useEffect(() => {
-        // Fetch data from the updated API route when the component mounts
         fetch('/api')
             .then(response => response.json())
             .then(data => {

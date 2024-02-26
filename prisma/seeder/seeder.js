@@ -128,23 +128,26 @@ const edges = [
 
 // Function to seed data
 async function seed() {
-
     const event = await prisma.event.create({
         data: {
             name: "Arany Nyúl",
             date: "2024-05-01T18:00:00Z",
-            editorRoles: [
-                "president",
-                "vice_president",
-                "event_manager"
-            ],
-        }
-    });
-    await prisma.node.createMany({
-        data: nodes.map(node => ({ ...node, eventId: event.id, })),
-    });
-    await prisma.edge.createMany({
-        data: edges.map(edge => ({ ...edge, eventId: event.id, })),
+            editorRoles: ["president", "vice_president", "event_manager"],
+            nodes: {
+                createMany: {
+                    data: nodes.map(node => ({ ...node })),
+                },
+            },
+            edges: {
+                createMany: {
+                    data: edges.map(edge => ({ ...edge })),
+                },
+            },
+        },
+        include: {
+            nodes: true,
+            edges: true,
+        },
     });
 
     console.log('Seed data inserted successfully');
