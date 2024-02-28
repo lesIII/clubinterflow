@@ -29,7 +29,7 @@ export default function Home() {
                 <br></br>
             </div>
 
-            <div className="w-1/5 text-center">
+            <div className="w-48 text-center">
 
                 {(!isLoaded || !userId) && (
                     <>
