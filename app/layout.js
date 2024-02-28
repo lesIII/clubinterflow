@@ -22,7 +22,7 @@ export const metadata = {
 	},
 };
 
-const clerk_pub_key = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
+const clerk_pub_key = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
 export default function RootLayout({
 									   children,

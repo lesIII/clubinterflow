@@ -40,7 +40,7 @@ export default function Home() {
                             size="lg"
                             fullWidth
                             className="mb-4"
-                            onPress={() => router.push('/login')}
+                            onPress={() => router.push('/sign-in')}
                         >
                             Login
                         </Button>
