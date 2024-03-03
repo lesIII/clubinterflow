@@ -9,21 +9,17 @@ export const siteConfig = {
 			href: "/",
 		},
     {
-      label: "Workflow",
-      href: "/workflow",
-    },
-    {
-      label: "Timetable",
-      href: "/timetable",
+      label: "Events",
+      href: "/events",
     },
     {
       label: "Gallery",
       href: "/gallery",
     },
     {
-      label: "Inventory",
-      href: "/inventory",
-    }
+      label: "Rulebook",
+      href: "/rulebook",
+    },
 	],
 	navMenuItems: [
 		{

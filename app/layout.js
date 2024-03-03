@@ -39,7 +39,7 @@ export default function RootLayout({
 			},
 			React.createElement("html", { lang: "en", suppressHydrationWarning: true },
 				React.createElement("head", null, React.createElement("title", null, "ClubInterFlow")),
-				React.createElement("body", { className: clsx("min-h-screen bg-background font-sans antialiased", fontSans.variable), style: { backgroundColor: "#1e1e1e" } },
+				React.createElement("body", { className: clsx("min-h-screen bg-background font-sans antialiased", fontSans.variable) },
 					React.createElement(Providers, { themeProps: { attribute: "class", defaultTheme: "dark" } },
 						React.createElement("div", { className: "flex flex-col min-h-screen" },
 							React.createElement(NavbarComponent, null),

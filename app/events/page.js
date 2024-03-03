@@ -1,22 +1,24 @@
 'use client'
 
-import Flow from "../workflow/ReactFlow";
+import Flow from "./Flowchart";
 import {subtitle, title} from "../../components/primitives"
 import {Button} from "@nextui-org/react";
 import React, {useEffect, useState} from "react";
 
-export default function WorkflowPage() {
+export default function EventPage() {
 
-	const [eventName, setEventName] = useState('');
+	const [eventName, setEventName] = useState('')
+	const [event, setEvent] = useState()
 
 	useEffect(() => {
 		// Fetch event data from the API when the component mounts
 		fetch('/api')
 			.then(response => response.json())
 			.then(event => {
-				setEventName(event.name); // Update eventName state with the fetched event name
+				setEvent(event)
+				console.log("asd:" + event)
 			})
-			.catch(error => console.error('Error fetching graph data:', error));
+			.catch(error => console.error('Error fetching graph data:', error))
 	}, []);
 
 	return (
@@ -27,6 +29,7 @@ export default function WorkflowPage() {
 				Upcoming events
 			</h2>
 			<div className="w-1/5">
+
 			<Button
 				radius="lg"
 				color="success"
@@ -36,7 +39,7 @@ export default function WorkflowPage() {
 				className="mb-4"
 				onPress={() => router.push('/login')}
 			>
-				{eventName || 'Loading...'}
+				{event && event.name ? event.name : 'o0o'}
 			</Button>
 			</div>
 			<Flow/>
