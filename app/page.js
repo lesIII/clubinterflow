@@ -9,7 +9,7 @@ import {Image} from "@nextui-org/react";
 
 export default function Home() {
     const router = useRouter()
-    const {isLoaded, userId} = useAuth();
+    const {isLoaded, userId} = useAuth()
     return (
 
         <section className="flex flex-col items-center justify-center gap-2 py-0 md:py-0">

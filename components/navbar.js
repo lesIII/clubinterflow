@@ -44,7 +44,7 @@ export default function NavbarComponent() {
 	}, [pathname]);
 
 	return (
-        <Navbar isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen} maxWidth="xl" position="sticky">
+        <Navbar isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen} maxWidth="xl" position="sticky" className="bg-background/0" >
             <NavbarBrand as="li" className="gap-3 max-w-fit">
                 <NextLink className="flex justify-start items-center gap-1" href="/">
                     <Logo/>
