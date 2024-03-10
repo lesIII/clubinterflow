@@ -12,13 +12,18 @@ export default function EventPage() {
 
 	useEffect(() => {
 		// Fetch event data from the API when the component mounts
-		fetch('/api')
+		fetch('/api/events', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json' // Specify content type as JSON
+			},
+			body: JSON.stringify({ eventId: 1 }) // Pass eventId as an object
+		})
 			.then(response => response.json())
 			.then(event => {
-				setEvent(event)
-				console.log("asd:" + event)
+				setEvent(event);
 			})
-			.catch(error => console.error('Error fetching graph data:', error))
+			.catch(error => console.error('Error fetching graph data:', error));
 	}, []);
 
 	return (
@@ -30,17 +35,17 @@ export default function EventPage() {
 			</h2>
 			<div className="w-1/5">
 
-			<Button
-				radius="lg"
-				color="success"
-				variant="ghost"
-				size="lg"
-				fullWidth
-				className="mb-4"
-				onPress={() => router.push('/login')}
-			>
-				{event && event.name ? event.name : 'o0o'}
-			</Button>
+				<Button
+					radius="lg"
+					color="success"
+					variant="ghost"
+					size="lg"
+					fullWidth
+					className="mb-4"
+					onPress={() => router.push('/login')}
+				>
+					{event && event.name ? event.name : 'o0o'}
+				</Button>
 			</div>
 			<Flow/>
 		</div>

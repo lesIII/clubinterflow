@@ -2,12 +2,14 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function GET(req, res) {
-    if (req.method !== 'GET') {
+export async function POST(req, res) {
+    if (req.method !== 'POST') {
         return new Response('Method Not Allowed', {
             status: 405,
         });
     }
+
+    const { eventId } = req.body; // Destructure eventId from req.query directly
 
     try {
         // Retrieve nodes and edges from the database
