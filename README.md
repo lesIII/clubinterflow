@@ -12,7 +12,8 @@ ClubInterFlow for '89 is an event planner and management website designed to str
 - Color coding for better visualization and organization.
 - Integration with email notifications to alert responsible users about their tasks.
 
-### Timetable:
+### Events:
+- All events are listed in a calendar and users can open their respective workflow chart.
 - Users can create, edit, and delete events and tasks.
 - Option for integration with Outlook Calendar or Google Calendar for enhanced scheduling capabilities.
 
@@ -38,8 +39,9 @@ ClubInterFlow for '89 is an event planner and management website designed to str
 - Description: Retrieve a list of all events stored in the database. This endpoint allows users to browse through all events available on the website.
 
 ### Get Event by ID:
-- Endpoint: `/api/events/{id}`
-- Method: GET
+- Endpoint: `/api/events`
+- Method: POST
+- body: {eventId}
 - Description: Retrieve a specific event by its unique identifier. This endpoint allows users to view detailed information about a particular event.
 
 ### Create Event:
@@ -81,8 +83,12 @@ ClubInterFlow for '89 is an event planner and management website designed to str
 
 ![UML Class Diagram](public/uml.svg)
 
+## Deployment
+The website is deployed on Vercel and is automatically updated with each commit to the GitHub repository.<br />
+Website URL: https://clubinterflow.vercel.app/
+
 ## Example Implementation
-- Users can create events and corresponding workflow charts using the provided example data and API calls to Prisma for data creation and retrieval.
+Users can create events and corresponding workflow charts using the provided example data and API calls to Prisma for data creation and retrieval.
 
 ## Conclusion
 ClubInterFlow for '89 is a comprehensive event planner and management website designed to simplify the organization process for club events. With its dynamic workflow chart, timetable, gallery, version history, donation platform, and inventory management features, it provides users with the tools they need to plan and execute successful events efficiently.

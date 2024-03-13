@@ -1,23 +1,22 @@
 import { PrismaClient } from '@prisma/client';
+import {NextRequest} from "next/server";
 
 const prisma = new PrismaClient();
 
-export async function POST(req, res) {
-    if (req.method !== 'POST') {
+export async function POST(request, res) {
+    if (request.method !== 'POST') {
         return new Response('Method Not Allowed', {
             status: 405,
         });
     }
 
-    const { eventId } = req.body; // Destructure eventId from req.query directly
+    const searchParams = request.nextUrl.searchParams
+    const eventId = searchParams.get('eventId')
 
     try {
-        // Retrieve nodes and edges from the database
-        //const nodes = await prisma.node.findMany();
-        //const edges = await prisma.edge.findMany();
         const event = await prisma.event.findUnique({
             where: {
-                id: 1
+                id: parseInt(eventId)
             },
             include: {
                 nodes: true,
@@ -25,7 +24,6 @@ export async function POST(req, res) {
             }
         });
 
-        // Return the retrieved data
         return Response.json(event)
     } catch (error) {
         console.error('Error fetching graph data:', error);

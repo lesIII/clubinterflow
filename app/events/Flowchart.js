@@ -26,12 +26,8 @@ function Flow() {
 
     useEffect(() => {
         // Fetch event data from the API when the component mounts
-        fetch('/api/events', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json' // Specify content type as JSON
-            },
-            body: JSON.stringify({ eventId: 1 }) // Pass eventId as an object
+        fetch('/api/events?eventId=1', {
+            method: 'POST'
         })
             .then(response => response.json())
             .then(data => {
