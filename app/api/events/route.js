@@ -31,7 +31,31 @@ export async function POST(request, res) {
             status: 500,
         });
     } finally {
-        // Disconnect PrismaClient
+        await prisma.$disconnect();
+    }
+}
+
+export async function GET(request, res) {
+    if (request.method !== 'GET') {
+        return new Response('Method Not Allowed', {
+            status: 405,
+        });
+    }
+
+    try {
+        const events = await prisma.event.findMany({
+            include: {
+                nodes: true,
+                edges: true
+            }
+        });
+        return Response.json(events)
+    } catch (error) {
+        console.error('Error fetching graph data:', error);
+        return new Response('Internal Server Error', {
+            status: 500,
+        });
+    } finally {
         await prisma.$disconnect();
     }
 }
