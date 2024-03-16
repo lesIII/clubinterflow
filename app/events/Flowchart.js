@@ -19,28 +19,15 @@ const edgeTypes = {
     floating: FloatingEdge,
 };
 
-function Flow() {
-
-    const [nodes, setNodes] = useState([]);
-    const [edges, setEdges] = useState([]);
-
-    useEffect(() => {
-        // Fetch event data from the API when the component mounts
-        fetch('/api/events?eventId=1', {
-            method: 'POST'
-        })
-            .then(response => response.json())
-            .then(data => {
-                const { nodes, edges } = data;
-                setNodes(nodes);
-                setEdges(edges);
-            })
-            .catch(error => console.error('Error fetching graph data:', error));
-    }, []);
+function Flow({nodes, edges, setNodes, setEdges}) {
 
     const onNodesChange = useCallback(
-        (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-        [],
+        (changes) => {
+            const updatedNodes = applyNodeChanges(changes, nodes);
+            setNodes(updatedNodes);
+            console.log("Updated nodes:", updatedNodes);
+        },
+        [nodes],
     );
 
     // @ts-ignore
@@ -60,7 +47,7 @@ function Flow() {
 
     // @ts-ignore
     return (
-        
+
             <ReactFlow nodes={nodes}
                        onNodesChange={onNodesChange}
                        edges={edges}
@@ -73,7 +60,7 @@ function Flow() {
                 <Background/>
                 <Controls/>
             </ReactFlow>
-        
+
     );
 }
 

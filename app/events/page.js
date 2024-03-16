@@ -2,13 +2,16 @@
 
 import React, {useState, useEffect} from "react"
 import Flow from "./Flowchart";
-import {title} from "../../components/primitives";
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell} from "@nextui-org/react";
+import {subtitle, title} from "../../components/primitives";
+import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button} from "@nextui-org/react";
+import {EditIcon, SaveIcon} from "../../components/icons";
 
 export default function EventPage() {
-    const [showTable, setShowTable] = useState(true);
-    const [event, setEvent] = useState([]);
-    const [events, setEvents] = useState([]);
+    const [showTable, setShowTable] = useState(true)
+    const [event, setEvent] = useState([])
+    const [events, setEvents] = useState([])
+    const [nodes, setNodes] = useState([])
+    const [edges, setEdges] = useState([])
 
     useEffect(() => {
         fetch('/api/events', {
@@ -29,6 +32,8 @@ export default function EventPage() {
             .then(response => response.json())
             .then(event => {
                 setEvent(event)
+                setNodes(event.nodes)
+                setEdges(event.edges)
             })
             .catch(error => console.error('Error fetching graph data:', error))
     };
@@ -62,12 +67,36 @@ export default function EventPage() {
         return cells;
     };
 
+    const saveEvent = () => {
+        fetch(`/api/events`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                eventId: event.id,
+                name: event.name, // Pass current event name
+                nodes: nodes, // Pass current nodes array
+                edges: edges // Pass current edges array
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Event updated successfully')
+                } else {
+                    // Handle HTTP errors
+                    throw new Error('Failed to update event');
+                }
+            })
+            .catch(error => console.error('Error updating event:', error));
+    };
+
     return (
         <div className="flex flex-col space-y-4 items-center custom-div">
-            <h1 className={`${title()} `}>Workflow</h1><br></br>
+            <h1 className={`${title()} `}>Workflow</h1>
 
             {showTable ? (
-                <Table>
+                <Table className="pt-7 ml-7">
                     <TableHeader>
                         <TableColumn className="text-center justify-center items-center">Year</TableColumn>
                         {[...Array(12)].map((_, index) => (
@@ -85,16 +114,28 @@ export default function EventPage() {
                 </Table>
             ) : (
                 <React.Fragment>
-                    <div className="flex justify-start w-full mb-4">
+                    <h2 className={subtitle()}>
+                        {event.name}
+                    </h2>
+                    <div className="flex gap-4 items-center">
+                        <Button className="items-center text-center justify-center" size="sm" isIconOnly color="success"
+                                variant="faded" aria-label="Edit">
+                            <EditIcon/>
+                        </Button>
+                        <Button className="items-center text-center justify-center" size="sm" isIconOnly color="success"
+                                variant="faded" aria-label="Save" onClick={saveEvent}>
+                            <SaveIcon/>
+                        </Button>
+                    </div>
+                    <div className="flex justify-start w-full ml-4 mb-4">
                         <a href="#" onClick={() => setShowTable(true)}
-                           className="font-medium text-green-700 dark:text-green-500 hover:underline">
+                           className="font-medium text-green-500 hover:underline hover:text-green-700">
                             Back to calendar
                         </a>
                     </div>
-                    <Flow event={event}/>
+                    <Flow event={event} nodes={nodes} edges={edges} setNodes={setNodes} setEdges={setEdges} />
                 </React.Fragment>
-            )
-            }
+            )}
         </div>
     )
         ;
