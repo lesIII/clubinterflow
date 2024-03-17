@@ -6,7 +6,8 @@ import ReactFlow, {
     applyEdgeChanges,
     applyNodeChanges,
     addEdge,
-    MarkerType,
+    updateEdge,
+    MarkerType
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
@@ -45,6 +46,11 @@ function Flow({nodes, edges, setNodes, setEdges}) {
         [setEdges]
     );
 
+    const onEdgeUpdate = useCallback(
+        (oldEdge, newConnection) => setEdges((els) => updateEdge(oldEdge, newConnection, els)),
+        []
+    );
+
     // @ts-ignore
     return (
 
@@ -52,6 +58,7 @@ function Flow({nodes, edges, setNodes, setEdges}) {
                        onNodesChange={onNodesChange}
                        edges={edges}
                        onEdgesChange={onEdgesChange}
+                       onEdgeUpdate={onEdgeUpdate}
                        onConnect={onConnect}
                        fitView
                        edgeTypes={edgeTypes}

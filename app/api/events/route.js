@@ -70,6 +70,15 @@ export async function PUT(request) {
     const requestBody = await request.json();
 
     try {
+         await prisma.event.update({
+            where: {
+                id: requestBody.eventId
+            },
+            data: {
+                name: requestBody.eventName,
+            },
+        });
+
         await prisma.$transaction([
             prisma.node.deleteMany({
                 where: {
