@@ -1,5 +1,6 @@
 import React from "react";
 
+
 export const Logo = ({ size = 36, width, height, ...props }) => (
 	React.createElement('svg',
 		{ fill: "none", height: size || height, viewBox: "0 0 32 32", width: size || width, ...props },
@@ -203,3 +204,4 @@ export const CancelIcon = ({
 		)
 	);
 };
+

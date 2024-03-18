@@ -4,7 +4,8 @@ import React, {useState, useEffect} from "react"
 import Flow from "./Flowchart";
 import {subtitle, title} from "../../components/primitives";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Input} from "@nextui-org/react";
-import {CancelIcon, EditIcon, SaveIcon} from "../../components/icons";
+import {CancelIcon, DeleteIcon, EditIcon, SaveIcon} from "../../components/icons";
+import Image from 'next/image'
 
 export default function EventPage() {
     const [showTable, setShowTable] = useState(true)
@@ -127,19 +128,34 @@ export default function EventPage() {
             ) : (
                 <React.Fragment>
                     {editorMode ? (
-                        <Input
-                            radius="none"
-                            placeholder="Name your event"
-                            defaultValue={event.name}
-                            className="max-w-[220px]"
-                            color="success"
-                            variant="underlined"
-                            onChange={(e) => setEvent({...event, name: e.target.value})}
-                        />
+                        <>
+                            <Input
+                                radius="none"
+                                placeholder="Name your event"
+                                defaultValue={event.name}
+                                className="max-w-[220px]"
+                                color="success"
+                                variant="underlined"
+                                onChange={(e) => setEvent({...event, name: e.target.value})}
+                            />
+                        </>
                     ) : (
-                        <h2 className={subtitle()}>
-                            {event.name}
-                        </h2>
+                        event.date &&
+                        <>
+                            <h2 className={subtitle()}>
+                                {event.name}
+                            </h2>
+                            <h2 className={subtitle()}>
+                                {new Date(event.date).toLocaleString('hu-HU', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false
+                                })}
+                            </h2>
+                        </>
                     )}
 
                     <div className="flex justify-between w-full ml-4 mb-4">
@@ -152,11 +168,34 @@ export default function EventPage() {
                                 <React.Fragment>
                                     <Button className="items-center text-center justify-center" size="sm" isIconOnly
                                             color="success" variant="faded" aria-label="Save" onClick={saveEvent}>
-                                        <SaveIcon/>
+                                        <Image
+                                            src="/save.svg"
+                                            width={18}
+                                            height={18}
+                                            alt="Delete event"
+                                            className="filter-green"
+                                        />
                                     </Button>
                                     <Button className="items-center text-center justify-center" size="sm" isIconOnly
-                                            color="success" variant="faded" aria-label="Cancel" onClick={() => handleButtonClick(event.id)}>
-                                        <CancelIcon/>
+                                            color="success" variant="faded" aria-label="Edit">
+                                        <Image
+                                            src="/delete.svg"
+                                            width={18}
+                                            height={18}
+                                            alt="Delete event"
+                                            className="filter-green"
+                                        />
+                                    </Button>
+                                    <Button className="items-center text-center justify-center" size="sm" isIconOnly
+                                            color="success" variant="faded" aria-label="Cancel"
+                                            onClick={() => handleButtonClick(event.id)}>
+                                        <Image
+                                            src="/cancel.svg"
+                                            width={18}
+                                            height={18}
+                                            alt="Delete event"
+                                            className="filter-green"
+                                        />
                                     </Button>
                                 </React.Fragment>
                             ) : (
@@ -167,7 +206,8 @@ export default function EventPage() {
                             )}
                         </div>
                     </div>
-                    <Flow event={event} nodes={nodes} edges={edges} setNodes={setNodes} setEdges={setEdges} editorMode={editorMode} />
+                    <Flow event={event} nodes={nodes} edges={edges} setNodes={setNodes} setEdges={setEdges}
+                          editorMode={editorMode}/>
                 </React.Fragment>
             )}
         </div>
