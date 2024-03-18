@@ -4,18 +4,18 @@ import React, {useState, useEffect} from "react"
 import Flow from "./Flowchart";
 import {subtitle, title} from "../../components/primitives";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Input} from "@nextui-org/react";
-import {EditIcon, SaveIcon} from "../../components/icons";
+import {CancelIcon, EditIcon, SaveIcon} from "../../components/icons";
 
 export default function EventPage() {
     const [showTable, setShowTable] = useState(true)
+    const [editorMode, setEditorMode] = useState(false)
     const [event, setEvent] = useState([])
     const [events, setEvents] = useState([])
     const [nodes, setNodes] = useState([])
     const [edges, setEdges] = useState([])
-    const [editorMode, setEditorMode] = useState(false)
 
-    useEffect(() => {
-        fetch('/api/events', {
+    const fetchEvents = async () => {
+        await fetch('/api/events', {
             method: 'GET'
         })
             .then(response => response.json())
@@ -23,11 +23,15 @@ export default function EventPage() {
                 setEvents(events);
             })
             .catch(error => console.error('Error fetching events data:', error));
+    }
+
+    useEffect(() => {
+        fetchEvents()
     }, []);
 
-    const handleButtonClick = (eventId) => {
+    const handleButtonClick = async (eventId) => {
         setShowTable(false)
-        fetch(`/api/events?eventId=${eventId}`, { // Update the URL with the eventId
+        await fetch(`/api/events?eventId=${eventId}`, { // Update the URL with the eventId
             method: 'POST'
         })
             .then(response => response.json())
@@ -37,10 +41,11 @@ export default function EventPage() {
                 setEdges(event.edges)
             })
             .catch(error => console.error('Error fetching graph data:', error))
+        setEditorMode(false)
     };
 
-    const saveEvent = () => {
-        fetch(`/api/events`, {
+    const saveEvent = async () => {
+        await fetch(`/api/events`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -61,6 +66,8 @@ export default function EventPage() {
                 }
             })
             .catch(error => console.error('Error updating event:', error));
+        handleButtonClick(event.id)
+        fetchEvents()
     };
 
     const editEvent = () => {
@@ -125,6 +132,8 @@ export default function EventPage() {
                             placeholder="Name your event"
                             defaultValue={event.name}
                             className="max-w-[220px]"
+                            color="success"
+                            variant="underlined"
                             onChange={(e) => setEvent({...event, name: e.target.value})}
                         />
                     ) : (
@@ -139,17 +148,26 @@ export default function EventPage() {
                             Back to calendar
                         </a>
                         <div className="flex gap-4 items-center mr-4">
-                            <Button className="items-center text-center justify-center" size="sm" isIconOnly
-                                    color="success" variant="faded" aria-label="Edit" onClick={editEvent}>
-                                <EditIcon/>
-                            </Button>
-                            <Button className="items-center text-center justify-center" size="sm" isIconOnly
-                                    color="success" variant="faded" aria-label="Save" onClick={saveEvent}>
-                                <SaveIcon/>
-                            </Button>
+                            {editorMode ? (
+                                <React.Fragment>
+                                    <Button className="items-center text-center justify-center" size="sm" isIconOnly
+                                            color="success" variant="faded" aria-label="Save" onClick={saveEvent}>
+                                        <SaveIcon/>
+                                    </Button>
+                                    <Button className="items-center text-center justify-center" size="sm" isIconOnly
+                                            color="success" variant="faded" aria-label="Cancel" onClick={() => handleButtonClick(event.id)}>
+                                        <CancelIcon/>
+                                    </Button>
+                                </React.Fragment>
+                            ) : (
+                                <Button className="items-center text-center justify-center" size="sm" isIconOnly
+                                        color="success" variant="faded" aria-label="Edit" onClick={editEvent}>
+                                    <EditIcon/>
+                                </Button>
+                            )}
                         </div>
                     </div>
-                    <Flow event={event} nodes={nodes} edges={edges} setNodes={setNodes} setEdges={setEdges}/>
+                    <Flow event={event} nodes={nodes} edges={edges} setNodes={setNodes} setEdges={setEdges} editorMode={editorMode} />
                 </React.Fragment>
             )}
         </div>

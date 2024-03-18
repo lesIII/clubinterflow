@@ -74,7 +74,6 @@ function FloatingEdge({ id, source, target, markerEnd, style, label }) {
                 </foreignObject>
             ) : (
                 <foreignObject x={midPointX - 20} y={midPointY - 20} width={40} height={40}>
-
                     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
                         <button
                             className="button edgebutton text-neutral-800"

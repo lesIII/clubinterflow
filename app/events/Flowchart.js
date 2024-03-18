@@ -1,5 +1,5 @@
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import ReactFlow, {
     Background,
     Controls,
@@ -20,7 +20,9 @@ const edgeTypes = {
     floating: FloatingEdge,
 };
 
-function Flow({nodes, edges, setNodes, setEdges}) {
+function Flow({nodes, edges, setNodes, setEdges, editorMode}) {
+
+    const edgeUpdateSuccessful = useRef(true);
 
     const onNodesChange = useCallback(
         (changes) => {
@@ -46,26 +48,42 @@ function Flow({nodes, edges, setNodes, setEdges}) {
         [setEdges]
     );
 
-    const onEdgeUpdate = useCallback(
-        (oldEdge, newConnection) => setEdges((els) => updateEdge(oldEdge, newConnection, els)),
-        []
-    );
+    const onEdgeUpdateStart = useCallback(() => {
+        edgeUpdateSuccessful.current = false;
+    }, []);
 
-    // @ts-ignore
+    const onEdgeUpdate = useCallback((oldEdge, newConnection) => {
+        edgeUpdateSuccessful.current = true;
+        setEdges((els) => updateEdge(oldEdge, newConnection, els));
+    }, []);
+
+    const onEdgeUpdateEnd = useCallback((_, edge) => {
+        if (!edgeUpdateSuccessful.current) {
+            setEdges((eds) => eds.filter((e) => e.id !== edge.id));
+        }
+
+        edgeUpdateSuccessful.current = true;
+    }, []);
+
     return (
-
             <ReactFlow nodes={nodes}
                        onNodesChange={onNodesChange}
                        edges={edges}
                        onEdgesChange={onEdgesChange}
                        onEdgeUpdate={onEdgeUpdate}
+                       onEdgeUpdateStart={onEdgeUpdateStart}
+                       onEdgeUpdateEnd={onEdgeUpdateEnd}
                        onConnect={onConnect}
                        fitView
                        edgeTypes={edgeTypes}
                        connectionLineComponent={FloatingConnectionLine}
+                       nodesDraggable={editorMode}
+                       nodesConnectable={editorMode}
             >
                 <Background/>
-                <Controls/>
+                <Controls
+                    showInteractive={false}
+                />
             </ReactFlow>
 
     );

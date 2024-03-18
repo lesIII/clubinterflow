@@ -130,7 +130,7 @@ const edges = [
 async function seed() {
     const event = await prisma.event.create({
         data: {
-            name: "Arany Nyúl",
+            name: "Golden Bunny",
             date: "2024-05-01T18:00:00Z",
             editorRoles: ["president", "vice_president", "event_manager"],
             nodes: {
