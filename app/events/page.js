@@ -182,6 +182,7 @@ export default function EventPage() {
                                 variant="underlined"
                                 onChange={(e) => setEvent({...event, name: e.target.value})}
                             />
+                            <Application theme={themes.dark}>
                             <div
                                 className="rainbow-align-content_center rainbow-m-vertical_large rainbow-p-horizontal_small rainbow-m_auto"
                                 style={{maxWidth: 400}}
@@ -193,7 +194,7 @@ export default function EventPage() {
                                     hour24
                                     locale="en-US"
                                 />
-                            </div>
+                            </div></Application>
                         </>
                     ) : (
                         event.date &&
