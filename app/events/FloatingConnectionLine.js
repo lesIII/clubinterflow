@@ -1,7 +1,7 @@
 import React from 'react';
-import { getBezierPath } from 'reactflow';
+import {getBezierPath, getStraightPath} from 'reactflow';
 
-import { getEdgeParams } from './utils';
+import { getEdgeParams, getEdgePosition } from './utils';
 
 // @ts-ignore
 function FloatingConnectionLine({ toX, toY, fromPosition, toPosition, fromNode }) {
@@ -17,11 +17,9 @@ function FloatingConnectionLine({ toX, toY, fromPosition, toPosition, fromNode }
     };
 
     const { sx, sy } = getEdgeParams(fromNode, targetNode);
-    const [edgePath] = getBezierPath({
+    const [edgePath] = getStraightPath({
         sourceX: sx,
         sourceY: sy,
-        sourcePosition: fromPosition,
-        targetPosition: toPosition,
         targetX: toX,
         targetY: toY
     });
@@ -30,11 +28,10 @@ function FloatingConnectionLine({ toX, toY, fromPosition, toPosition, fromNode }
         <g>
             <path
                 fill="none"
-                stroke="#222"
+                stroke="#30FF41"
                 strokeWidth={1.5}
                 className="animated"
                 d={edgePath}
-                style={{ stroke: '#30FF41' }}
             />
             <circle
                 cx={toX}

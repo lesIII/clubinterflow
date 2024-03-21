@@ -76,6 +76,7 @@ export async function PUT(request) {
             },
             data: {
                 name: requestBody.eventName,
+                date: requestBody.date
             },
         });
 
@@ -94,6 +95,7 @@ export async function PUT(request) {
                     position: node.position,
                     data: node.data,
                     eventId: requestBody.eventId,
+                    type: 'custom'
                 },
             });
         }));

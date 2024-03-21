@@ -2,18 +2,54 @@
 
 import React, {useState, useEffect} from "react"
 import Flow from "./Flowchart";
-import {subtitle, title} from "../../components/primitives";
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Input} from "@nextui-org/react";
-import {CancelIcon, DeleteIcon, EditIcon, SaveIcon} from "../../components/icons";
+import {title} from "../../components/primitives";
+import {
+    Table,
+    TableHeader,
+    TableColumn,
+    TableBody,
+    TableRow,
+    TableCell,
+    Button,
+    Input,
+    Spinner
+} from "@nextui-org/react";
 import Image from 'next/image'
+import {Application, DateTimePicker} from 'react-rainbow-components';
+
+const themes = {
+    light: {
+        rainbow: {
+            palette: {
+                brand: '#4dc9cb',
+                success: '#98D38C',
+                warning: '#F7DB62',
+                error: '#f2707a',
+            },
+        },
+    },
+    dark: {
+        rainbow: {
+            palette: {
+                mainBackground: '#212121',
+                brand: '#44FF8C',
+                success: '#00FF8C',
+                warning: '#F7DB62',
+                error: '#f2707a',
+            },
+        },
+    },
+};
 
 export default function EventPage() {
     const [showTable, setShowTable] = useState(true)
     const [editorMode, setEditorMode] = useState(false)
     const [event, setEvent] = useState([])
     const [events, setEvents] = useState([])
+    const [isLoading, setIsLoading] = useState(true);
     const [nodes, setNodes] = useState([])
     const [edges, setEdges] = useState([])
+    const [dateTime, setDateTime] = useState(new Date());
 
     const fetchEvents = async () => {
         await fetch('/api/events', {
@@ -22,6 +58,7 @@ export default function EventPage() {
             .then(response => response.json())
             .then(events => {
                 setEvents(events);
+                setIsLoading(false)
             })
             .catch(error => console.error('Error fetching events data:', error));
     }
@@ -30,7 +67,7 @@ export default function EventPage() {
         fetchEvents()
     }, []);
 
-    const handleButtonClick = async (eventId) => {
+    const fetchEvent = async (eventId) => {
         setShowTable(false)
         await fetch(`/api/events?eventId=${eventId}`, { // Update the URL with the eventId
             method: 'POST'
@@ -38,6 +75,7 @@ export default function EventPage() {
             .then(response => response.json())
             .then(event => {
                 setEvent(event)
+                setDateTime(new Date(event.date))
                 setNodes(event.nodes)
                 setEdges(event.edges)
             })
@@ -54,6 +92,7 @@ export default function EventPage() {
             body: JSON.stringify({
                 eventId: event.id,
                 eventName: event.name,
+                date: dateTime,
                 name: event.name,
                 nodes: nodes,
                 edges: edges
@@ -61,19 +100,23 @@ export default function EventPage() {
         })
             .then(response => {
                 if (response.ok) {
-                    console.log('Event updated successfully')
                 } else {
                     throw new Error('Failed to update event');
                 }
             })
             .catch(error => console.error('Error updating event:', error));
-        handleButtonClick(event.id)
+        fetchEvent(event.id)
         fetchEvents()
     };
 
     const editEvent = () => {
         setEditorMode(true)
     }
+
+    const handleDateTimeChange = (value) => {
+        setDateTime(value); // Update DateTimePicker value
+        setEvent({...event, date: value}); // Update event date
+    };
 
     const renderTableCells = () => {
         const cells = [];
@@ -88,7 +131,7 @@ export default function EventPage() {
                         {eventsInMonth.map(event => (
                             <React.Fragment key={event.id}>
                                 <a href="#"
-                                   onClick={() => handleButtonClick(event.id)} // Pass event ID to handleButtonClick
+                                   onClick={() => fetchEvent(event.id)} // Pass event ID to fetchEvent
                                    className="font-medium text-green-700 dark:text-green-500 hover:underline">
                                     {event.name}
                                 </a>
@@ -107,18 +150,19 @@ export default function EventPage() {
     return (
         <div className="flex flex-col space-y-4 items-center custom-div">
             <h1 className={`${title()} `}>Workflow</h1>
-
             {showTable ? (
                 <Table className="pt-7 ml-7">
                     <TableHeader>
                         <TableColumn className="text-center justify-center items-center">Year</TableColumn>
                         {[...Array(12)].map((_, index) => (
-                            <TableColumn key={`Month-${index + 1}`} className="text-center justify-center items-center">
+                            <TableColumn key={`Month-${index + 1}`}
+                                         className="text-center justify-center items-center">
                                 {new Date(new Date().getFullYear(), index, 1).toLocaleString('default', {month: 'long'})}
                             </TableColumn>
                         ))}
                     </TableHeader>
-                    <TableBody>
+                    <TableBody isLoading={isLoading}
+                               loadingContent={<Spinner color="success" />}>
                         <TableRow>
                             <TableCell>{new Date().getFullYear()}</TableCell>
                             {renderTableCells()}
@@ -138,14 +182,27 @@ export default function EventPage() {
                                 variant="underlined"
                                 onChange={(e) => setEvent({...event, name: e.target.value})}
                             />
+                            <div
+                                className="rainbow-align-content_center rainbow-m-vertical_large rainbow-p-horizontal_small rainbow-m_auto"
+                                style={{maxWidth: 400}}
+                            >
+                                <Application theme={themes.dark}>
+                                <DateTimePicker
+                                    value={dateTime}
+                                    onChange={handleDateTimeChange} // Pass the handleDateTimeChange function as onChange
+                                    className="rainbow-m-around_small"
+                                    hour24
+                                    locale="en-US"
+                                /></Application>
+                            </div>
                         </>
                     ) : (
                         event.date &&
                         <>
-                            <h2 className={subtitle()}>
+                            <h2 className={`underline underline-offset-2 decoration-green-500 text-2xl`}>
                                 {event.name}
                             </h2>
-                            <h2 className={subtitle()}>
+                            <h2 className="text-medium font-light">
                                 {new Date(event.date).toLocaleString('hu-HU', {
                                     year: 'numeric',
                                     month: '2-digit',
@@ -188,7 +245,7 @@ export default function EventPage() {
                                     </Button>
                                     <Button className="items-center text-center justify-center" size="sm" isIconOnly
                                             color="success" variant="faded" aria-label="Cancel"
-                                            onClick={() => handleButtonClick(event.id)}>
+                                            onClick={() => fetchEvent(event.id)}>
                                         <Image
                                             src="/cancel.svg"
                                             width={18}
@@ -201,7 +258,13 @@ export default function EventPage() {
                             ) : (
                                 <Button className="items-center text-center justify-center" size="sm" isIconOnly
                                         color="success" variant="faded" aria-label="Edit" onClick={editEvent}>
-                                    <EditIcon/>
+                                    <Image
+                                        src="/edit.svg"
+                                        width={18}
+                                        height={18}
+                                        alt="Delete event"
+                                        className="filter-green"
+                                    />
                                 </Button>
                             )}
                         </div>
@@ -211,6 +274,4 @@ export default function EventPage() {
                 </React.Fragment>
             )}
         </div>
-    )
-        ;
-}
+    )}

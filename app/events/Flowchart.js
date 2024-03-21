@@ -7,17 +7,21 @@ import ReactFlow, {
     applyNodeChanges,
     addEdge,
     updateEdge,
-    MarkerType
+    MarkerType, ConnectionMode
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
 import FloatingEdge from "./FloatingEdge";
 import FloatingConnectionLine from './FloatingConnectionLine';
+import CustomNode from "./CustomNode";
 
 import '@/styles/globals.css';
 
 const edgeTypes = {
     floating: FloatingEdge,
+};
+const nodeTypes = {
+    custom: CustomNode,
 };
 
 function Flow({nodes, edges, setNodes, setEdges, editorMode}) {
@@ -65,6 +69,8 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode}) {
         edgeUpdateSuccessful.current = true;
     }, []);
 
+    const asd = false;
+
     return (
             <ReactFlow nodes={nodes}
                        onNodesChange={onNodesChange}
@@ -76,9 +82,11 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode}) {
                        onConnect={onConnect}
                        fitView
                        edgeTypes={edgeTypes}
+                       nodeTypes={nodeTypes}
                        connectionLineComponent={FloatingConnectionLine}
                        nodesDraggable={editorMode}
                        nodesConnectable={editorMode}
+                       connectionMode={ConnectionMode.Loose}
             >
                 <Background/>
                 <Controls

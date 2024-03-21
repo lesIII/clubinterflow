@@ -11,43 +11,50 @@ const nodes = [
         id: 'president',
         position: {x: 0, y: -100},
         data: {label: 'President'},
+        type: 'custom'
     },
     {
         id: 'vice_president',
         position: {x: 0, y: 0},
         data: {label: 'Vice President'},
-        type: ''
+        type: 'custom'
     },
     {
         id: 'event_manager',
         position: {x: 0, y: 100},
         data: {label: 'Event Manager'},
+        type: 'custom'
     },
     {
         id: 'pr_manager',
         position: {x: -350, y: 100},
         data: {label: 'PR Manager'},
+        type: 'custom'
     },
     {
         id: 'technician',
         position: {x: 350, y: 100},
         data: {label: 'Technician'},
+        type: 'custom'
     },
     {
         id: 'logistics_manager',
         position: {x: -200, y: 300},
         data: {label: 'Logistics Manager'},
+        type: 'custom'
 
     },
     {
         id: 'hygiene_manager',
         position: {x: 200, y: 300},
         data: {label: 'Hygiene Manager'},
+        type: 'custom'
     },
     {
         id: 'finances_manager',
         position: {x: 0, y: 400},
         data: {label: 'Finances Manager'},
+        type: 'custom'
     },
 ]
 const edges = [

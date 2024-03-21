@@ -20,8 +20,8 @@ import {siteConfig} from "../config/site";
 import NextLink from "next/link";
 import clsx from "clsx";
 
-import React, { useEffect, useState } from "react"; // Add React import
-import { useRouter, usePathname } from "next/navigation"; // Correct import statement for useRouter
+import React, { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 import {ThemeSwitch} from "./theme-switch";
 import {
@@ -34,7 +34,6 @@ import {
 
 export default function NavbarComponent() {
 
-	const router = useRouter();
 	const pathname = usePathname()
 	const [currentPath, setCurrentPath] = useState('');
     const [isMenuOpen, setIsMenuOpen] = React.useReducer((current) => !current, false);
