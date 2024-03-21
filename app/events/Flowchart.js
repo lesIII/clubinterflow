@@ -1,4 +1,3 @@
-
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import ReactFlow, {
     Background,
@@ -14,6 +13,7 @@ import 'reactflow/dist/style.css';
 import FloatingEdge from "./FloatingEdge";
 import FloatingConnectionLine from './FloatingConnectionLine';
 import CustomNode from "./CustomNode";
+import ContextMenu from './ContextMenu';
 
 import '@/styles/globals.css';
 
@@ -27,6 +27,25 @@ const nodeTypes = {
 function Flow({nodes, edges, setNodes, setEdges, editorMode}) {
 
     const edgeUpdateSuccessful = useRef(true);
+    const [menu, setMenu] = useState(null);
+
+    const onNodeContextMenu = useCallback(
+        (event, node) => {
+            // Prevent native context menu from showing
+            event.preventDefault();
+
+            // Calculate position of the context menu. We want to make sure it
+            // doesn't get positioned off-screen.
+            const pane = ref.current.getBoundingClientRect();
+            setMenu({
+                id: node.id,
+                top: event.clientY - 288,
+                left: event.clientX - 140,
+            });
+        },
+        [setMenu],
+    );
+    const onPaneClick = useCallback(() => setMenu(null), [setMenu]);
 
     const onNodesChange = useCallback(
         (changes) => {
@@ -47,7 +66,7 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode}) {
     const onConnect = useCallback(
         (params) =>
             setEdges((eds) =>
-                addEdge({ ...params, type: 'floating', markerEnd: { type: MarkerType.Arrow }, animated: true, }, eds)
+                addEdge({...params, type: 'floating', markerEnd: {type: MarkerType.Arrow}, animated: true,}, eds)
             ),
         [setEdges]
     );
@@ -69,30 +88,35 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode}) {
         edgeUpdateSuccessful.current = true;
     }, []);
 
-    const asd = false;
+    const ref = useRef(null);
 
     return (
-            <ReactFlow nodes={nodes}
-                       onNodesChange={onNodesChange}
-                       edges={edges}
-                       onEdgesChange={onEdgesChange}
-                       onEdgeUpdate={onEdgeUpdate}
-                       onEdgeUpdateStart={onEdgeUpdateStart}
-                       onEdgeUpdateEnd={onEdgeUpdateEnd}
-                       onConnect={onConnect}
-                       fitView
-                       edgeTypes={edgeTypes}
-                       nodeTypes={nodeTypes}
-                       connectionLineComponent={FloatingConnectionLine}
-                       nodesDraggable={editorMode}
-                       nodesConnectable={editorMode}
-                       connectionMode={ConnectionMode.Loose}
-            >
-                <Background/>
-                <Controls
-                    showInteractive={false}
-                />
-            </ReactFlow>
+        <ReactFlow
+            ref={ref}
+            nodes={nodes}
+            onNodesChange={onNodesChange}
+            edges={edges}
+            onEdgesChange={onEdgesChange}
+            onEdgeUpdate={onEdgeUpdate}
+            onEdgeUpdateStart={onEdgeUpdateStart}
+            onEdgeUpdateEnd={onEdgeUpdateEnd}
+            onConnect={onConnect}
+            fitView
+            edgeTypes={edgeTypes}
+            nodeTypes={nodeTypes}
+            connectionLineComponent={FloatingConnectionLine}
+            nodesDraggable={editorMode}
+            nodesConnectable={editorMode}
+            connectionMode={ConnectionMode.Loose}
+            onPaneClick={onPaneClick}
+            onNodeContextMenu={onNodeContextMenu}
+        >
+            <Background/>
+            <Controls
+                showInteractive={false}
+            />
+            {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
+        </ReactFlow>
 
     );
 }

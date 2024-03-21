@@ -122,3 +122,23 @@
     right: -10px; /* Adjust to expand hitbox to the right */
     bottom: -10px; /* Adjust to expand hitbox downwards */
 }
+
+.context-menu {
+    background: #222222;
+    border-style: solid;
+    box-shadow: 10px 19px 20px rgba(0, 0, 0, 10%);
+    position: absolute;
+    z-index: 10;
+}
+
+.context-menu button {
+    border: none;
+    display: block;
+    padding: 0.5em;
+    text-align: left;
+    width: 100%;
+}
+
+.context-menu button:hover {
+    background: white;
+}
