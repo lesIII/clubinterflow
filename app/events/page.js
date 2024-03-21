@@ -15,7 +15,6 @@ import {
     Spinner
 } from "@nextui-org/react";
 import Image from 'next/image'
-import {Application, DateTimePicker} from 'react-rainbow-components';
 
 const themes = {
     light: {
@@ -186,14 +185,7 @@ export default function EventPage() {
                                 className="rainbow-align-content_center rainbow-m-vertical_large rainbow-p-horizontal_small rainbow-m_auto"
                                 style={{maxWidth: 400}}
                             >
-                                <Application theme={themes.dark}>
-                                <DateTimePicker
-                                    value={dateTime}
-                                    onChange={handleDateTimeChange} // Pass the handleDateTimeChange function as onChange
-                                    className="rainbow-m-around_small"
-                                    hour24
-                                    locale="en-US"
-                                /></Application>
+
                             </div>
                         </>
                     ) : (
