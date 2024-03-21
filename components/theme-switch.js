@@ -4,7 +4,7 @@ import { useIsSSR } from "@react-aria/ssr";
 import clsx from "clsx";
 
 import { SunFilledIcon, MoonFilledIcon } from "./icons";
-import {Switch} from "@nextui-org/react";
+import { Switch } from "@nextui-org/react";
 
 export const ThemeSwitch = () => {
 	const { theme, setTheme } = useTheme();
@@ -24,20 +24,7 @@ export const ThemeSwitch = () => {
 			aria-label={`Switch to ${theme === "light" || isSSR ? "dark" : "light"} mode`}
 			onChange={onChange}
 			className="px-px transition-opacity hover:opacity-80 cursor-pointer"
-			wrapperClassName={(classNames) =>
-				clsx([
-					"w-auto h-auto",
-					"bg-transparent",
-					"rounded-lg",
-					"flex items-center justify-center",
-					"group-data-[selected=true]:bg-transparent",
-					"!text-default-500",
-					"pt-px",
-					"px-0",
-					"mx-0",
-					classNames?.wrapper,
-				])
-			}
+
 		>
 			<VisuallyHidden>
 				<input />
