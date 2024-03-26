@@ -43,17 +43,23 @@ export default function ContextMenu({
     return (
         <>
             <div
-                style={{ position: 'absolute', top, left }}
+                style={{position: 'absolute', top, left}}
                 className="context-menu"
                 {...props}
             >
-                <p style={{ margin: '0.5em' }}>
+                <p style={{margin: '0.5em'}}>
                     <small>node: {id}</small>
                 </p>
-                <Button onPress={onOpen} color="primary">
-                    Open Modal
-                </Button>
-                <button onClick={deleteNode}>Delete</button>
+                <a href=""
+                   onClick={() => onOpen}
+                   className="font-medium text-green-700 dark:text-green-500 hover:underline">
+                    Edit
+                </a>
+                <a href=""
+                   onClick={() => deleteNode}
+                   className="font-medium text-green-700 dark:text-green-500 hover:underline">
+                    Delete
+                </a>
             </div>
             <Modal isOpen={isOpen} onOpenChange={onClose} placement="top-center">
                 <ModalContent>

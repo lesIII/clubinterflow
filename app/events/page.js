@@ -1,8 +1,8 @@
 'use client'
 
 import React, {useState, useEffect} from "react"
-import Flow from "./Flowchart";
-import {title} from "../../components/primitives";
+import Flow from "./Flowchart"
+import {title} from "../../components/primitives"
 import {
     Table,
     TableHeader,
@@ -16,12 +16,11 @@ import {
 } from "@nextui-org/react";
 import Image from 'next/image'
 
-import { DateTimePicker, LocalizationProvider  } from '@mui/x-date-pickers';
+import { DateTimePicker, LocalizationProvider  } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import Dayjs from 'dayjs';
-import dayjs from "dayjs";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+import dayjs from "dayjs"
+import { ThemeProvider, createTheme } from '@mui/material/styles'
+import CssBaseline from '@mui/material/CssBaseline'
 
 const darkTheme = createTheme({
     palette: {
@@ -167,7 +166,6 @@ export default function EventPage() {
                                 onChange={(e) => setEvent({...event, name: e.target.value})}
                             />
                             <ThemeProvider theme={darkTheme}>
-                                <CssBaseline />
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DateTimePicker value={dateTime} onChange={(newValue) => setDateTime(newValue)}/>
                                 </LocalizationProvider>

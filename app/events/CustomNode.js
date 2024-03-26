@@ -1,5 +1,6 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { Handle, Position } from 'reactflow';
+import './handle.css';
 
 function CustomNode({ data }) {
     return (
