@@ -15,31 +15,19 @@ import {
     Spinner
 } from "@nextui-org/react";
 import Image from 'next/image'
-import {Application, DateTimePicker} from 'react-rainbow-components';
 
-const themes = {
-    light: {
-        rainbow: {
-            palette: {
-                brand: '#4dc9cb',
-                success: '#98D38C',
-                warning: '#F7DB62',
-                error: '#f2707a',
-            },
-        },
+import { DateTimePicker, LocalizationProvider  } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import Dayjs from 'dayjs';
+import dayjs from "dayjs";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+const darkTheme = createTheme({
+    palette: {
+        mode: 'dark',
     },
-    dark: {
-        rainbow: {
-            palette: {
-                mainBackground: '#212121',
-                brand: '#44FF8C',
-                success: '#00FF8C',
-                warning: '#F7DB62',
-                error: '#f2707a',
-            },
-        },
-    },
-};
+});
 
 export default function EventPage() {
     const [showTable, setShowTable] = useState(true)
@@ -49,7 +37,8 @@ export default function EventPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [nodes, setNodes] = useState([])
     const [edges, setEdges] = useState([])
-    const [dateTime, setDateTime] = useState(new Date());
+    const [dateTime, setDateTime] = React.useState(null);
+
 
     const fetchEvents = async () => {
         await fetch('/api/events', {
@@ -75,7 +64,7 @@ export default function EventPage() {
             .then(response => response.json())
             .then(event => {
                 setEvent(event)
-                setDateTime(new Date(event.date))
+                setDateTime(dayjs(event.date))
                 setNodes(event.nodes)
                 setEdges(event.edges)
             })
@@ -112,11 +101,6 @@ export default function EventPage() {
     const editEvent = () => {
         setEditorMode(true)
     }
-
-    const handleDateTimeChange = (value) => {
-        setDateTime(value); // Update DateTimePicker value
-        setEvent({...event, date: value}); // Update event date
-    };
 
     const renderTableCells = () => {
         const cells = [];
@@ -182,15 +166,14 @@ export default function EventPage() {
                                 variant="underlined"
                                 onChange={(e) => setEvent({...event, name: e.target.value})}
                             />
-                            <Application theme={themes.dark} className="rainbow-p-vertical_xx-large rainbow-align-content_center">
-                                <DateTimePicker
-                                    value={dateTime}
-                                    onChange={handleDateTimeChange} // Pass the handleDateTimeChange function as onChange
-                                    className="rainbow-m-around_small"
-                                    hour24
-                                    locale="en-US"
-                                />
-                            </Application>
+                            <ThemeProvider theme={darkTheme}>
+                                <CssBaseline />
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DateTimePicker value={dateTime} onChange={(newValue) => setDateTime(newValue)}/>
+                                </LocalizationProvider>
+                            </ThemeProvider>
+
+
                         </>
                     ) : (
                         event.date &&
