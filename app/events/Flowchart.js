@@ -1,12 +1,14 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import ReactFlow, {
     Background,
     Controls,
     applyEdgeChanges,
     applyNodeChanges,
     addEdge,
+    removeEdge,
     updateEdge,
-    MarkerType, ConnectionMode
+    MarkerType,
+    ConnectionMode
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
@@ -14,6 +16,7 @@ import FloatingEdge from "./FloatingEdge";
 import FloatingConnectionLine from './FloatingConnectionLine';
 import CustomNode from "./CustomNode";
 import ContextMenu from './ContextMenu';
+import EdgeContextMenu from './EdgeContextMenu';
 
 import '@/styles/globals.css';
 
@@ -28,6 +31,7 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode}) {
 
     const edgeUpdateSuccessful = useRef(true);
     const [menu, setMenu] = useState(null);
+    const [edgeMenu, setEdgeMenu] = useState(null);
 
     const onNodeContextMenu = useCallback(
         (event, node) => {
@@ -45,13 +49,34 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode}) {
         },
         [setMenu],
     );
-    const onPaneClick = useCallback(() => setMenu(null), [setMenu]);
+
+    const onEdgeContextMenu = useCallback(
+        (event, edge) => {
+            // Prevent native context menu from showing
+            event.preventDefault();
+
+            // Calculate position of the context menu. We want to make sure it
+            // doesn't get positioned off-screen.
+            const pane = ref.current.getBoundingClientRect();
+            setEdgeMenu({
+                id: edge.id,
+                top: event.clientY - 288,
+                left: event.clientX - 140,
+            });
+        },
+        [setEdgeMenu],
+    );
+
+    const onPaneClick = useCallback(() => {
+        setMenu(null);
+        setEdgeMenu(null);
+        console.log(JSON.stringify(edges, null, 2));
+    }, [setMenu, setEdgeMenu]);
 
     const onNodesChange = useCallback(
         (changes) => {
             const updatedNodes = applyNodeChanges(changes, nodes);
             setNodes(updatedNodes);
-            console.log("Updated nodes:", updatedNodes);
         },
         [nodes],
     );
@@ -64,11 +89,20 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode}) {
 
     // @ts-ignore
     const onConnect = useCallback(
-        (params) =>
+        (params) => {
+            const maxId = Math.max(...edges.map(edge => parseInt(edge.id))) || 0;
+            const newId = (maxId + 1).toString();
             setEdges((eds) =>
-                addEdge({...params, type: 'floating', markerEnd: {type: MarkerType.Arrow}, animated: true,}, eds)
-            ),
-        [setEdges]
+                addEdge({
+                    ...params,
+                    id: newId,
+                    type: 'floating',
+                    markerEnd: { type: 'arrow' },
+                    animated: true,
+                }, eds)
+            );
+        },
+        [setEdges, edges]
     );
 
     const onEdgeUpdateStart = useCallback(() => {
@@ -110,12 +144,14 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode}) {
             connectionMode={ConnectionMode.Loose}
             onPaneClick={onPaneClick}
             onNodeContextMenu={onNodeContextMenu}
+            onEdgeContextMenu={onEdgeContextMenu}
         >
             <Background/>
             <Controls
                 showInteractive={false}
             />
             {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
+            {edgeMenu && <EdgeContextMenu onClick={onPaneClick} {...edgeMenu} />}
         </ReactFlow>
 
     );

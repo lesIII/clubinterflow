@@ -9,24 +9,24 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 model Event {
-  id        Int      @id @default(autoincrement())
-  name      String
-  date      DateTime?
+  id          Int       @id @default(autoincrement())
+  name        String
+  date        DateTime?
   editorRoles String[]
-  nodes     Node[]
-  edges     Edge[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  nodes       Node[]
+  edges       Edge[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Node {
-  id        String   @id
+  id        Int      @id @default(autoincrement())
   position  Json
   data      Json
   type      String?
@@ -38,9 +38,9 @@ model Node {
 }
 
 model Edge {
-  id        String   @id
-  source    String
-  target    String
+  id        Int      @id @default(autoincrement())
+  source    Int
+  target    Int
   label     String?
   animated  Boolean  @default(true)
   style     Json?

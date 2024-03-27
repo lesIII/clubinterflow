@@ -20,7 +20,6 @@ import { DateTimePicker, LocalizationProvider  } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from "dayjs"
 import { ThemeProvider, createTheme } from '@mui/material/styles'
-import CssBaseline from '@mui/material/CssBaseline'
 
 const darkTheme = createTheme({
     palette: {
@@ -57,15 +56,23 @@ export default function EventPage() {
 
     const fetchEvent = async (eventId) => {
         setShowTable(false)
-        await fetch(`/api/events?eventId=${eventId}`, { // Update the URL with the eventId
+        await fetch(`/api/events?eventId=${eventId}`, {
             method: 'POST'
         })
             .then(response => response.json())
             .then(event => {
                 setEvent(event)
                 setDateTime(dayjs(event.date))
-                setNodes(event.nodes)
-                setEdges(event.edges)
+                setNodes(event.nodes.map(node => ({
+                    ...node,
+                    id: node.id.toString(),
+                })))
+                setEdges(event.edges.map(edge => ({
+                    ...edge,
+                    id: edge.id.toString(),
+                    source: edge.source.toString(),
+                    target: edge.target.toString()
+                })))
             })
             .catch(error => console.error('Error fetching graph data:', error))
         setEditorMode(false)
@@ -82,8 +89,16 @@ export default function EventPage() {
                 eventName: event.name,
                 date: dateTime,
                 name: event.name,
-                nodes: nodes,
-                edges: edges
+                nodes: nodes.map(node => ({
+                    ...node,
+                    id: parseInt(node.id),
+                })),
+                edges: edges.map(edge => ({
+                    ...edge,
+                    id: parseInt(edge.id),
+                    source: parseInt(edge.source),
+                    target: parseInt(edge.target),
+                }))
             })
         })
             .then(response => {
@@ -113,9 +128,10 @@ export default function EventPage() {
                     <TableCell key={`${currentYear}-${i}`}>
                         {eventsInMonth.map(event => (
                             <React.Fragment key={event.id}>
-                                <a href="#"
-                                   onClick={() => fetchEvent(event.id)} // Pass event ID to fetchEvent
-                                   className="font-medium text-green-700 dark:text-green-500 hover:underline">
+                                <a
+                                   onClick={() => fetchEvent(event.id)}
+                                   className="font-medium text-green-700 dark:text-green-500 hover:underline"
+                                   style={{ cursor: 'pointer' }}>
                                     {event.name}
                                 </a>
                                 <br/>
@@ -193,7 +209,7 @@ export default function EventPage() {
                     )}
 
                     <div className="flex justify-between w-full ml-4 mb-4">
-                        <a href="#" onClick={() => setShowTable(true)}
+                        <a onClick={() => setShowTable(true)}
                            className="font-medium text-green-500 hover:underline hover:text-green-700">
                             Back to calendar
                         </a>
