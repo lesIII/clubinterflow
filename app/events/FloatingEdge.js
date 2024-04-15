@@ -1,7 +1,8 @@
 import { useCallback, useRef, useEffect, useState } from 'react';
 import { useStore, getBezierPath } from 'reactflow';
-
+import React from 'react';
 import { getEdgeParams } from './utils';
+import {Button, ButtonGroup} from "@nextui-org/react";
 
 // @ts-ignore
 function FloatingEdge({ id, source, target, markerEnd, style, label }) {
@@ -44,6 +45,8 @@ function FloatingEdge({ id, source, target, markerEnd, style, label }) {
     const labelX = midPointX - (labelDimensions.width / 2);
     const labelY = midPointY - (labelDimensions.height / 2);
 
+    const formattedLabel = label && label.split('\n').map((line, index) => <div key={index}>{line}</div>);
+
     return (
         <>
             <path
@@ -69,7 +72,7 @@ function FloatingEdge({ id, source, target, markerEnd, style, label }) {
                             whiteSpace: 'nowrap'
                         }}
                     >
-                        {label}
+                        {formattedLabel}
                     </div>
                 </foreignObject>
             ) : (

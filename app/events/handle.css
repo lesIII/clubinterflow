@@ -11,8 +11,8 @@
 .react-flow__handle::after {
     content: '';
     position: absolute;
-    top: -10px; /* Adjust to expand hitbox upwards */
-    left: -10px; /* Adjust to expand hitbox to the left */
-    right: -10px; /* Adjust to expand hitbox to the right */
-    bottom: -10px; /* Adjust to expand hitbox downwards */
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
 }

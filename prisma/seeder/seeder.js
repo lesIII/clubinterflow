@@ -98,6 +98,7 @@ const edges = [
         animated: true,
         type: 'floating',
         markerEnd: {type: MarkerType.Arrow},
+        due: 0
     },
     {
         id: 2,
@@ -106,6 +107,7 @@ const edges = [
         animated: true,
         type: 'floating',
         markerEnd: {type: MarkerType.Arrow},
+        due: 0
     },
     {
         id: 3,
@@ -114,6 +116,7 @@ const edges = [
         animated: true,
         type: 'floating',
         markerEnd: {type: MarkerType.Arrow},
+        due: 0
     },
     {
         id: 4,
@@ -122,7 +125,8 @@ const edges = [
         animated: true,
         type: 'floating',
         markerEnd: {type: MarkerType.Arrow},
-        style: {stroke: 'red'}
+        style: {stroke: 'red'},
+        due: 0
     },
     {
         id: 5,
@@ -131,6 +135,8 @@ const edges = [
         animated: true,
         type: 'floating',
         markerEnd: {type: MarkerType.Arrow},
+        style: {stroke: 'chartreuse'},
+        due: 0
     },
     {
         id: 6,
@@ -139,6 +145,7 @@ const edges = [
         animated: true,
         type: 'floating',
         markerEnd: {type: MarkerType.Arrow},
+        due: 0
     },
     {
         id: 7,
@@ -147,6 +154,8 @@ const edges = [
         animated: true,
         type: 'floating',
         markerEnd: {type: MarkerType.Arrow},
+        style: {stroke: 'chartreuse'},
+        due: 0
     },
     {
         id: 8,
@@ -155,6 +164,8 @@ const edges = [
         animated: true,
         type: 'floating',
         markerEnd: {type: MarkerType.Arrow},
+        style: {stroke: 'red'},
+        due: 0
     },
     {
         id: 9,
@@ -163,6 +174,7 @@ const edges = [
         animated: true,
         type: 'floating',
         markerEnd: {type: MarkerType.Arrow},
+        due: 0
     },
 ]
 

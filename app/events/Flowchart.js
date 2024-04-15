@@ -1,22 +1,20 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import ReactFlow, {
     Background,
     Controls,
     applyEdgeChanges,
     applyNodeChanges,
     addEdge,
-    removeEdge,
+    NodeToolbar,
     updateEdge,
     MarkerType,
-    ConnectionMode
+    ConnectionMode, Panel
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
-import FloatingEdge from "./FloatingEdge";
-import FloatingConnectionLine from './FloatingConnectionLine';
-import CustomNode from "./CustomNode";
-import ContextMenu from './ContextMenu';
-import EdgeContextMenu from './EdgeContextMenu';
+import FloatingEdge from "./FloatingEdge"
+import FloatingConnectionLine from './FloatingConnectionLine'
+import CustomNode from "./CustomNode"
 
 import '@/styles/globals.css';
 
@@ -27,51 +25,42 @@ const nodeTypes = {
     custom: CustomNode,
 };
 
-function Flow({nodes, edges, setNodes, setEdges, editorMode}) {
+function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
+
+    const [nodesWithProps, setNodesWithProps] = useState([]);
+    const [maxId, setMaxId] = useState(0);
+
+    const fetchNodes = async () => {
+        await fetch('/api/nodes', {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(nodes => {
+                const currentMaxId = nodes.length > 0 ? Math.max(...nodes.map(node => parseInt(node.id))) : 0;
+                setMaxId(currentMaxId);
+            })
+            .catch(error => console.error('Error fetching nodes:', error));
+    }
+
+    useEffect(() => {
+        fetchNodes();
+    }, []);
+
+    useEffect(() => {
+        if (nodes) {
+            setNodesWithProps(nodes.map(node => ({
+                ...node,
+                data: {
+                    ...node.data,
+                    id: node.id,
+                    setNodes: setNodes,
+                    setEdges: setEdges
+                }
+            })));
+        }
+    }, [nodes, setNodes, setEdges]);
 
     const edgeUpdateSuccessful = useRef(true);
-    const [menu, setMenu] = useState(null);
-    const [edgeMenu, setEdgeMenu] = useState(null);
-
-    const onNodeContextMenu = useCallback(
-        (event, node) => {
-            // Prevent native context menu from showing
-            event.preventDefault();
-
-            // Calculate position of the context menu. We want to make sure it
-            // doesn't get positioned off-screen.
-            const pane = ref.current.getBoundingClientRect();
-            setMenu({
-                id: node.id,
-                top: event.clientY - 288,
-                left: event.clientX - 140,
-            });
-        },
-        [setMenu],
-    );
-
-    const onEdgeContextMenu = useCallback(
-        (event, edge) => {
-            // Prevent native context menu from showing
-            event.preventDefault();
-
-            // Calculate position of the context menu. We want to make sure it
-            // doesn't get positioned off-screen.
-            const pane = ref.current.getBoundingClientRect();
-            setEdgeMenu({
-                id: edge.id,
-                top: event.clientY - 288,
-                left: event.clientX - 140,
-            });
-        },
-        [setEdgeMenu],
-    );
-
-    const onPaneClick = useCallback(() => {
-        setMenu(null);
-        setEdgeMenu(null);
-        console.log(JSON.stringify(edges, null, 2));
-    }, [setMenu, setEdgeMenu]);
 
     const onNodesChange = useCallback(
         (changes) => {
@@ -118,16 +107,31 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode}) {
         if (!edgeUpdateSuccessful.current) {
             setEdges((eds) => eds.filter((e) => e.id !== edge.id));
         }
-
         edgeUpdateSuccessful.current = true;
     }, []);
 
-    const ref = useRef(null);
+    const onAdd = useCallback(() => {
+        const newId = maxId + 1;
+        setMaxId(newId);
+        console.log(newId)
+        setNodes((currentNodes) => {
+            const newNode = {
+                id: `${newId}`,
+                data: { label: 'President' },
+                position: {
+                    x: Math.floor(Math.random() * 400) - 200,
+                    y: Math.floor(Math.random() * 400) - 200,
+                },
+                type: 'custom'
+            };
+            return currentNodes.concat(newNode);
+        });
+    }, [maxId]);
+
 
     return (
         <ReactFlow
-            ref={ref}
-            nodes={nodes}
+            nodes={nodesWithProps}
             onNodesChange={onNodesChange}
             edges={edges}
             onEdgesChange={onEdgesChange}
@@ -142,18 +146,15 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode}) {
             nodesDraggable={editorMode}
             nodesConnectable={editorMode}
             connectionMode={ConnectionMode.Loose}
-            onPaneClick={onPaneClick}
-            onNodeContextMenu={onNodeContextMenu}
-            onEdgeContextMenu={onEdgeContextMenu}
         >
             <Background/>
             <Controls
                 showInteractive={false}
             />
-            {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
-            {edgeMenu && <EdgeContextMenu onClick={onPaneClick} {...edgeMenu} />}
+            <Panel position="top-right">
+                <button onClick={onAdd}>➕</button>
+            </Panel>
         </ReactFlow>
-
     );
 }
 

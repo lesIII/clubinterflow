@@ -37,7 +37,6 @@ export default function EventPage() {
     const [edges, setEdges] = useState([])
     const [dateTime, setDateTime] = React.useState(null);
 
-
     const fetchEvents = async () => {
         await fetch('/api/events', {
             method: 'GET'
@@ -79,6 +78,7 @@ export default function EventPage() {
     };
 
     const saveEvent = async () => {
+        console.log(nodes)
         await fetch(`/api/events`, {
             method: 'PUT',
             headers: {

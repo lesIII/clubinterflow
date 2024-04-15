@@ -104,24 +104,16 @@
     width: 150px;
 }
 
-
-
 .context-menu {
-    background: #222222;
+    background: #4a4a4a;
     border-style: solid;
-    box-shadow: 10px 19px 20px rgba(0, 0, 0, 10%);
+    box-shadow: 6px 6px 6px rgba(0, 0, 0, 40%);
     position: absolute;
     z-index: 10;
-}
-
-.context-menu button {
-    border: none;
-    display: block;
-    padding: 0.5em;
+    border-radius: 5px;
+    padding: 10px 15px 10px 15px;
+    justify-content: flex-start;
     text-align: left;
-    width: 100%;
 }
 
-.context-menu button:hover {
-    background: white;
-}
+
