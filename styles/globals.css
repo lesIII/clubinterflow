@@ -116,4 +116,18 @@
     text-align: left;
 }
 
+.my-button {
+    background-color: transparent;
+    border: 1px solid #22C55E;
+    color: #22C55E;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
+}
 
+.my-button:hover, .my-button:focus {
+    background-color: #22C55E;
+    color: black;
+    border-color: #22C55E;
+}

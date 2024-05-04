@@ -5,7 +5,7 @@ import { getEdgeParams } from './utils';
 import {Button, ButtonGroup} from "@nextui-org/react";
 
 // @ts-ignore
-function FloatingEdge({ id, source, target, markerEnd, style, label }) {
+function FloatingEdge({ id, source, target, markerEnd, style, label, selected }) {
     const sourceNode = useStore(useCallback((store) => store.nodeInternals.get(source), [source]));
     const targetNode = useStore(useCallback((store) => store.nodeInternals.get(target), [target]));
 
@@ -41,9 +41,9 @@ function FloatingEdge({ id, source, target, markerEnd, style, label }) {
     const midPointX = (sx + tx) / 2;
     const midPointY = (sy + ty) / 2;
 
-// Adjust label position based on midpoint and label dimensions
-    const labelX = midPointX - (labelDimensions.width / 2);
-    const labelY = midPointY - (labelDimensions.height / 2);
+    // Adjust label position based on midpoint and label dimensions
+    const labelX = midPointX - (labelDimensions.width /2);
+    const labelY = midPointY - (labelDimensions.height /2);
 
     const formattedLabel = label && label.split('\n').map((line, index) => <div key={index}>{line}</div>);
 
@@ -56,6 +56,11 @@ function FloatingEdge({ id, source, target, markerEnd, style, label }) {
                 markerEnd={markerEnd}
                 style={style}
             />
+            {selected && (
+                <foreignObject x={midPointX - 25} y={midPointY - 55} width={40} height={40} overflow="visible">
+                        <button className="my-button">Edit</button>
+                </foreignObject>
+            )}
             {label ? (
                 <foreignObject x={labelX} y={labelY} width={labelDimensions.width} height={labelDimensions.height}>
                     <div
@@ -75,18 +80,7 @@ function FloatingEdge({ id, source, target, markerEnd, style, label }) {
                         {formattedLabel}
                     </div>
                 </foreignObject>
-            ) : (
-                <foreignObject x={midPointX - 20} y={midPointY - 20} width={40} height={40}>
-                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
-                        <button
-                            className="button edgebutton text-neutral-800"
-                            style={{paddingBottom: '0.1rem', lineHeight: '1'}}
-                        >
-                            +
-                        </button>
-                    </div>
-                </foreignObject>
-            )}
+            ) : null}
         </>
     );
 }
