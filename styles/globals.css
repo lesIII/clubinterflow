@@ -118,10 +118,10 @@
 
 .my-button {
     background-color: transparent;
-    border: 1px solid #22C55E;
+    border: 2px solid #22C55E;
     color: #22C55E;
     padding: 0.25rem 0.75rem;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
     cursor: pointer;
 }

@@ -114,6 +114,7 @@ export async function PUT(request) {
                     id: edge.id,
                     source: edge.source,
                     target: edge.target,
+                    due: edge.due,
                     label: edge.label,
                     animated: edge.animated,
                     type: edge.type,

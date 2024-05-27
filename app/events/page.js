@@ -69,6 +69,7 @@ export default function EventPage() {
                 setEdges(event.edges.map(edge => ({
                     ...edge,
                     id: edge.id.toString(),
+                    due: edge.due,
                     source: edge.source.toString(),
                     target: edge.target.toString()
                 })))
@@ -78,7 +79,6 @@ export default function EventPage() {
     };
 
     const saveEvent = async () => {
-        console.log(nodes)
         await fetch(`/api/events`, {
             method: 'PUT',
             headers: {
@@ -96,6 +96,7 @@ export default function EventPage() {
                 edges: edges.map(edge => ({
                     ...edge,
                     id: parseInt(edge.id),
+                    due: parseInt(edge.due),
                     source: parseInt(edge.source),
                     target: parseInt(edge.target),
                 }))
