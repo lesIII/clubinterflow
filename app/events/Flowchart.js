@@ -29,6 +29,20 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
 
     const [nodesWithProps, setNodesWithProps] = useState([]);
     const [maxId, setMaxId] = useState(0);
+    const [allEdges, setAllEdges] = useState([]);
+    const [edgesFetched, setEdgesFetched] = useState(false);
+
+    const fetchAllEdges = async () => {
+        await fetch('/api/edges', {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(edges => {
+                setAllEdges(edges)
+                setEdgesFetched(true);
+            })
+            .catch(error => console.error('Error fetching edges:', error));
+    }
 
     const fetchNodes = async () => {
         await fetch('/api/nodes', {
@@ -44,6 +58,7 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
 
     useEffect(() => {
         fetchNodes();
+        fetchAllEdges();
     }, []);
 
     useEffect(() => {
@@ -79,19 +94,25 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
     // @ts-ignore
     const onConnect = useCallback(
         (params) => {
-            const maxId = Math.max(...edges.map(edge => parseInt(edge.id))) || 0;
-            const newId = (maxId + 1).toString();
+            if (!edgesFetched) {
+                return;
+            }
+
+            const maxAllEdges = Math.max(...allEdges.map(edge => edge.id));
+            const maxEdges = Math.max(...edges.map(edge => edge.id));
+            const newId = maxAllEdges > maxEdges ? maxAllEdges : maxEdges;
+            console.log(newId)
             setEdges((eds) =>
                 addEdge({
                     ...params,
-                    id: newId,
+                    id: parseInt(newId) + 1,
                     type: 'floating',
                     markerEnd: { type: 'arrow' },
                     animated: true,
                 }, eds)
             );
         },
-        [setEdges, edges]
+        [setEdges, edges, edgesFetched]
     );
 
     const onEdgeUpdateStart = useCallback(() => {

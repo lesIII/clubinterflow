@@ -81,6 +81,8 @@ export async function PUT(request) {
 
     const requestBody = await request.json();
 
+    console.log(requestBody.edges)
+
     try {
         const currentEdges = await prisma.edge.findMany({
             where: {
@@ -129,9 +131,9 @@ export async function PUT(request) {
         await Promise.all(requestBody.edges.map(async edge => {
             await prisma.edge.create({
                 data: {
-                    id: edge.id,
-                    source: edge.source,
-                    target: edge.target,
+                    id: parseInt(edge.id),
+                    source: parseInt(edge.source),
+                    target: parseInt(edge.target),
                     due: edge.due,
                     label: edge.label,
                     animated: edge.animated,
@@ -149,8 +151,8 @@ export async function PUT(request) {
             const isNewEdge = !currentEdges.some(currentEdge => currentEdge.id === edge.id);
 
             if (isNewEdge) {
-                const subordinate_role = changeCase.snakeCase(requestBody.nodes.find(node => node.id === edge.target).data.label);
-                const superior_manager = requestBody.nodes.find(node => node.id === edge.source).data.label;
+                const subordinate_role = changeCase.snakeCase(requestBody.nodes.find(node => node.id === parseInt(edge.target)).data.label);
+                const superior_manager = requestBody.nodes.find(node => node.id === parseInt(edge.source)).data.label;
 
                 let date = new Date(requestBody.date);
                 let formattedDate = date.toLocaleString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });

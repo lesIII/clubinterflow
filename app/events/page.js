@@ -106,12 +106,12 @@ export default function EventPage() {
                     id: parseInt(node.id),
                 })),
                 edges: edges.map(edge => ({
-                    ...edge,
                     id: parseInt(edge.id),
                     due: parseInt(edge.due),
                     source: parseInt(edge.source),
                     target: parseInt(edge.target),
-                    style: edge.style
+                    style: edge.style,
+                    ...edge,
                 }))
             })
         })

@@ -10,30 +10,11 @@ export async function GET(request) {
         });
     }
 
-    const searchParams = request.nextUrl.searchParams;
-    const edgeId = searchParams.get('edgeId');
-
     try {
-        const edge = await prisma.edge.findUnique({
-            where: {
-                id: parseInt(edgeId)
-            }
-        });
-
-        if (!edge) {
-            return new Response('Edge not found', {
-                status: 404
-            });
-        }
-
-        return new Response(JSON.stringify(edge), {
-            status: 200,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+        const edges = await prisma.edge.findMany();
+        return Response.json(edges)
     } catch (error) {
-        console.error('Error fetching edge:', error);
+        console.error('Error fetching graph data:', error);
         return new Response('Internal Server Error', {
             status: 500,
         });
