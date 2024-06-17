@@ -178,13 +178,12 @@ export async function PUT(request) {
                         `
                     };
 
-                    transporter.sendMail(mailOptions, function(error, info){
-                        if (error) {
-                            console.log(error);
-                        } else {
-                            console.log('Email sent: ' + info.response);
-                        }
-                    });
+                    try {
+                        let info = await transporter.sendMail(mailOptions);
+                        console.log('Email sent: ' + info.response);
+                    } catch (error) {
+                        console.log(error);
+                    }
                 }
             }
         }
