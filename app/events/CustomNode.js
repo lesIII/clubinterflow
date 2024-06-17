@@ -12,17 +12,7 @@ import {
     SelectItem, useDisclosure
 } from "@nextui-org/react";
 
-const managers = [
-    { id: 'president', label: 'President' },
-    { id: 'vice_president', label: 'Vice President' },
-    { id: 'event_manager', label: 'Event Manager' },
-    { id: 'pr_manager', label: 'PR Manager' },
-    { id: 'technician', label: 'Technician' },
-    { id: 'logistics_manager', label: 'Logistics Manager' },
-    { id: 'hygiene_manager', label: 'Hygiene Manager' },
-    { id: 'finances_manager', label: 'Finances Manager' },
-    { id: 'internal_event_manager', label: 'Internal Event Manager' }
-];
+import {Managers} from "../roles";
 
 function CustomNode({ data }) {
 
@@ -51,7 +41,9 @@ function CustomNode({ data }) {
     };
 
     const handleSelectionChange = (e) => {
-        setManager(e.target.value)
+        const selectedKey = e.target.value;
+        const selectedValue = Managers[selectedKey];
+        setManager(selectedValue);
     };
     
     return (
@@ -74,13 +66,13 @@ function CustomNode({ data }) {
                             label="Set the manager"
                             variant="underlined"
                             color="success"
-                            placeholder={manager}
-                            selectedKeys={[manager]}
+                            placeholder={getNode(data.id).data.label}
+                            selectedKeys={Managers[manager]}
                             className="max-w-xs"
                             onChange={handleSelectionChange}>
-                            {managers.map((manager) => (
-                                <SelectItem key={manager.label} value={manager.label}>
-                                    {manager.label}
+                            {Object.entries(Managers).map(([key, value]) => (
+                                <SelectItem key={key} value={key}>
+                                    {value}
                                 </SelectItem>
                             ))}
                         </Select>

@@ -12,11 +12,14 @@ import {
     TableCell,
     Button,
     Input,
-    Spinner
+    Spinner,
+    Modal, ModalContent, ModalHeader, ModalBody, ModalFooter,
+    Dropdown, DropdownTrigger, DropdownMenu, DropdownItem
 } from "@nextui-org/react";
 import Image from 'next/image'
+import { Managers } from '../roles';
 
-import { DateTimePicker, LocalizationProvider  } from '@mui/x-date-pickers'
+import { DateTimePicker, MobileDateTimePicker, LocalizationProvider  } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from "dayjs"
 import { ThemeProvider, createTheme } from '@mui/material/styles'
@@ -36,6 +39,14 @@ export default function EventPage() {
     const [nodes, setNodes] = useState([])
     const [edges, setEdges] = useState([])
     const [dateTime, setDateTime] = React.useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [newEvent, setNewEvent] = useState({ name: '', date: dayjs(), roles: '' });
+    const [roleKeys, setRoleKeys] = React.useState(new Set(["president"]));
+
+    const roleValue = React.useMemo(
+        () => Array.from(roleKeys).join(", ").replaceAll("_", " "),
+        [roleKeys]
+    );
 
     const fetchEvents = async () => {
         await fetch('/api/events', {
@@ -71,7 +82,8 @@ export default function EventPage() {
                     id: edge.id.toString(),
                     due: edge.due,
                     source: edge.source.toString(),
-                    target: edge.target.toString()
+                    target: edge.target.toString(),
+                    style: edge.style
                 })))
             })
             .catch(error => console.error('Error fetching graph data:', error))
@@ -99,6 +111,7 @@ export default function EventPage() {
                     due: parseInt(edge.due),
                     source: parseInt(edge.source),
                     target: parseInt(edge.target),
+                    style: edge.style
                 }))
             })
         })
@@ -116,6 +129,34 @@ export default function EventPage() {
     const editEvent = () => {
         setEditorMode(true)
     }
+
+    const handleFormSubmit = async () => {
+        await fetch(`/api/event`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: newEvent.name,
+                date: newEvent.date,
+                editorRoles: [...roleKeys]
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                } else {
+                    throw new Error('Failed to create event');
+                }
+            })
+            .catch(error => console.error('Error creating event:', error));
+        await fetchEvents();
+        setIsModalOpen(false);
+    };
+
+    const handleInputChange = (e) => {
+        setNewEvent({ ...newEvent, [e.target.name]: e.target.value });
+        console.log([...roleKeys])
+    };
 
     const renderTableCells = () => {
         const cells = [];
@@ -147,28 +188,95 @@ export default function EventPage() {
         return cells;
     };
 
+    const deleteEvent = async () => {
+        await fetch(`/api/events?eventId=${event.id}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    throw new Error('Failed to delete event');
+                }
+            })
+            .catch(error => console.error('Error deleting event:', error));
+    };
+
     return (
         <div className="flex flex-col space-y-4 items-center custom-div">
-            <h1 className={`${title()} `}>Workflow</h1>
+            <h1 className={`${title()} mb-5`}>Workflow</h1>
             {showTable ? (
-                <Table className="pt-7 ml-7">
-                    <TableHeader>
-                        <TableColumn className="text-center justify-center items-center">Year</TableColumn>
-                        {[...Array(12)].map((_, index) => (
-                            <TableColumn key={`Month-${index + 1}`}
-                                         className="text-center justify-center items-center">
-                                {new Date(new Date().getFullYear(), index, 1).toLocaleString('default', {month: 'long'})}
-                            </TableColumn>
-                        ))}
-                    </TableHeader>
-                    <TableBody isLoading={isLoading}
-                               loadingContent={<Spinner color="success" />}>
-                        <TableRow>
-                            <TableCell>{new Date().getFullYear()}</TableCell>
-                            {renderTableCells()}
-                        </TableRow>
-                    </TableBody>
-                </Table>
+                <>
+                    <Button color="success"variant="ghost" size="md" onClick={() => setIsModalOpen(true)}>Create Event</Button>
+                    <Modal isOpen={isModalOpen} isDismissable={false} onClose={() => setIsModalOpen(false)}>
+                        <ModalContent>
+                            <ModalHeader>Create Event</ModalHeader>
+                            <ModalBody>
+                                <Input
+                                    name="name"
+                                    placeholder="Event Name"
+                                    onChange={handleInputChange}
+                                />
+                                <ThemeProvider theme={darkTheme}>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <MobileDateTimePicker
+                                            defaultValue={dayjs()}
+                                            name="date"
+                                            value={newEvent.date}
+                                            onChange={(newValue) => setNewEvent({ ...newEvent, date: newValue })}
+                                        />
+                                    </LocalizationProvider>
+                                </ThemeProvider>
+                                <p className="text-sm">Who can edit the event?</p>
+                                <Dropdown>
+                                    <DropdownTrigger>
+                                        <Button
+                                            variant="bordered"
+                                            className="capitalize"
+                                        >
+                                            {roleValue}
+                                        </Button>
+                                    </DropdownTrigger>
+                                    <DropdownMenu
+                                        aria-label="Multiple selection example"
+                                        variant="flat"
+                                        closeOnSelect={false}
+                                        disallowEmptySelection
+                                        selectionMode="multiple"
+                                        selectedKeys={roleKeys}
+                                        onSelectionChange={setRoleKeys}
+                                    >
+                                        {Object.entries(Managers).map(([key, value]) => (
+                                            <DropdownItem key={key}>{value}</DropdownItem>
+                                        ))}
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="danger" variant="flat" onClick={() => setIsModalOpen(false)}>Close</Button>
+                                <Button color="success" onClick={handleFormSubmit}>Save</Button>
+                            </ModalFooter>
+                        </ModalContent>
+                    </Modal>
+                    <Table className="ml-5 mr-5">
+                        <TableHeader>
+                            <TableColumn className="text-center justify-center items-center">Year</TableColumn>
+                            {[...Array(12)].map((_, index) => (
+                                <TableColumn key={`Month-${index + 1}`}
+                                             className="text-center justify-center items-center">
+                                    {new Date(new Date().getFullYear(), index, 1).toLocaleString('default', {month: 'long'})}
+                                </TableColumn>
+                            ))}
+                        </TableHeader>
+                        <TableBody isLoading={isLoading}
+                                   loadingContent={<Spinner color="success" />}>
+                            <TableRow>
+                                <TableCell>{new Date().getFullYear()}</TableCell>
+                                {renderTableCells()}
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </>
             ) : (
                 <React.Fragment>
                     {editorMode ? (
@@ -211,7 +319,7 @@ export default function EventPage() {
 
                     <div className="flex justify-between w-full ml-4 mb-4">
                         <a onClick={() => setShowTable(true)}
-                           className="font-medium text-green-500 hover:underline hover:text-green-700">
+                           className="font-medium text-green-500 hover:underline hover:text-green-700 cursor-pointer">
                             Back to calendar
                         </a>
                         <div className="flex gap-4 items-center mr-4">
@@ -223,12 +331,12 @@ export default function EventPage() {
                                             src="/save.svg"
                                             width={18}
                                             height={18}
-                                            alt="Delete event"
+                                            alt="Save event"
                                             className="filter-green"
                                         />
                                     </Button>
                                     <Button className="items-center text-center justify-center" size="sm" isIconOnly
-                                            color="success" variant="faded" aria-label="Edit">
+                                            color="success" variant="faded" aria-label="Delete" onClick={deleteEvent}>
                                         <Image
                                             src="/delete.svg"
                                             width={18}
@@ -244,7 +352,7 @@ export default function EventPage() {
                                             src="/cancel.svg"
                                             width={18}
                                             height={18}
-                                            alt="Delete event"
+                                            alt="Cancel"
                                             className="filter-green"
                                         />
                                     </Button>
@@ -256,7 +364,7 @@ export default function EventPage() {
                                         src="/edit.svg"
                                         width={18}
                                         height={18}
-                                        alt="Delete event"
+                                        alt="Edit event"
                                         className="filter-green"
                                     />
                                 </Button>

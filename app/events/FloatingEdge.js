@@ -230,7 +230,7 @@ function FloatingEdge({ id, source, target, markerEnd, style, label, selected })
                         style={{
                             position: 'absolute',
                             background: 'white',
-                            padding: '2px 4px',
+                            padding: '1px 4px 2px 4px',
                             borderRadius: '2px',
                             fontSize: '9px',
                             fontWeight: '400',

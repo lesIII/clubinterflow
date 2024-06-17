@@ -113,7 +113,6 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
     const onAdd = useCallback(() => {
         const newId = maxId + 1;
         setMaxId(newId);
-        console.log(newId)
         setNodes((currentNodes) => {
             const newNode = {
                 id: `${newId}`,
@@ -152,7 +151,7 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
                 showInteractive={false}
             />
             <Panel position="top-right">
-                <button onClick={onAdd}>➕</button>
+                <button onClick={onAdd}><h1 className="text-3xl text-green-500">+</h1></button>
             </Panel>
         </ReactFlow>
     );
