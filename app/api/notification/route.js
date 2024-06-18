@@ -50,7 +50,6 @@ export async function GET(request, res) {
             });
         }
 
-
         let mailOptions = {
             from: 'c4fic7@inf.elte.hu',
             to: userWithRole.emailAddresses[0].emailAddress,
@@ -60,15 +59,12 @@ export async function GET(request, res) {
             `,
         };
 
-        transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-                console.log(error);
-                return res.status(500).json({ error: 'Failed to send email' });
-            } else {
-                console.log('Email sent: ' + info.response);
-                return res.status(200).json({ message: 'Task accepted and email sent' });
-            }
-        });
+        try {
+            let info = await transporter.sendMail(mailOptions);
+            console.log('Email sent: ' + info.response);
+        } catch (error) {
+            console.log(error);
+        }
 
         return new Response('Your response has been submitted.', {
             status: 200,
