@@ -42,6 +42,7 @@ export default function EventPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newEvent, setNewEvent] = useState({ name: '', date: dayjs(), roles: '' });
     const [roleKeys, setRoleKeys] = React.useState(new Set(["president"]));
+    const [isLoadingFlow, setIsLoadingFlow] = useState(false);
 
     const roleValue = React.useMemo(
         () => Array.from(roleKeys).join(", ").replaceAll("_", " "),
@@ -65,12 +66,18 @@ export default function EventPage() {
     }, []);
 
     const fetchEvent = async (eventId) => {
+        setIsLoadingFlow(true);
         setShowTable(false)
+        setEvent([]);
+        setNodes([]);
+        setEdges([]);
+
         await fetch(`/api/events?eventId=${eventId}`, {
             method: 'POST'
         })
             .then(response => response.json())
             .then(event => {
+                console.log('Fetched event:', event); // Add logging here
                 setEvent(event)
                 setDateTime(dayjs(event.date))
                 setNodes(event.nodes.map(node => ({
@@ -85,8 +92,12 @@ export default function EventPage() {
                     target: edge.target.toString(),
                     style: edge.style
                 })))
+                setIsLoadingFlow(false);
             })
-            .catch(error => console.error('Error fetching graph data:', error))
+            .catch(error => {
+                console.error('Error fetching graph data:', error)
+                setIsLoadingFlow(false);
+            })
         setEditorMode(false)
     };
 
@@ -371,8 +382,12 @@ export default function EventPage() {
                             )}
                         </div>
                     </div>
-                    <Flow event={event} nodes={nodes} edges={edges} setNodes={setNodes} setEdges={setEdges}
-                          editorMode={editorMode}/>
+                    {isLoadingFlow ? (
+                        <Spinner color="success" />
+                    ) : (
+                        <Flow event={event} nodes={nodes} edges={edges} setNodes={setNodes} setEdges={setEdges}
+                              editorMode={editorMode}/>
+                    )}
                 </React.Fragment>
             )}
         </div>

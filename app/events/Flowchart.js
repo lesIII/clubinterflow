@@ -11,6 +11,7 @@ import ReactFlow, {
     ConnectionMode, Panel
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import {CircularProgress} from "@nextui-org/react";
 
 import FloatingEdge from "./FloatingEdge"
 import FloatingConnectionLine from './FloatingConnectionLine'
