@@ -96,7 +96,7 @@ export default function EventPage() {
                     target: edge.target.toString(),
                     style: edge.style
                 })))
-                setEditor(event.editorRoles.includes(user.publicMetadata.role))
+                setEditor(event.editorRoles.includes(user.publicMetadata.role) || user.publicMetadata.role === 'product_owner')
                 setIsLoadingFlow(false);
             })
             .catch(error => {
