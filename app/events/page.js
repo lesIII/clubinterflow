@@ -24,6 +24,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from "dayjs"
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 
+import { useUser } from '@clerk/clerk-react';
+
 const darkTheme = createTheme({
     palette: {
         mode: 'dark',
@@ -43,6 +45,8 @@ export default function EventPage() {
     const [newEvent, setNewEvent] = useState({ name: '', date: dayjs(), roles: '' });
     const [roleKeys, setRoleKeys] = React.useState(new Set(["president"]));
     const [isLoadingFlow, setIsLoadingFlow] = useState(false);
+    const { user } = useUser();
+    const [editor, setEditor] = useState(false);
 
     const roleValue = React.useMemo(
         () => Array.from(roleKeys).join(", ").replaceAll("_", " "),
@@ -92,6 +96,7 @@ export default function EventPage() {
                     target: edge.target.toString(),
                     style: edge.style
                 })))
+                setEditor(event.editorRoles.includes(user.publicMetadata.role))
                 setIsLoadingFlow(false);
             })
             .catch(error => {
@@ -369,16 +374,19 @@ export default function EventPage() {
                                     </Button>
                                 </React.Fragment>
                             ) : (
-                                <Button className="items-center text-center justify-center" size="sm" isIconOnly
-                                        color="success" variant="faded" aria-label="Edit" onClick={editEvent}>
-                                    <Image
-                                        src="/edit.svg"
-                                        width={18}
-                                        height={18}
-                                        alt="Edit event"
-                                        className="filter-green"
-                                    />
-                                </Button>
+                                <>
+                                { editor && (
+                                    <Button className="items-center text-center justify-center" size="sm" isIconOnly
+                                            color="success" variant="faded" aria-label="Edit" onClick={editEvent}>
+                                        <Image
+                                            src="/edit.svg"
+                                            width={18}
+                                            height={18}
+                                            alt="Edit event"
+                                            className="filter-green"
+                                        />
+                                    </Button>
+                                ) }</>
                             )}
                         </div>
                     </div>

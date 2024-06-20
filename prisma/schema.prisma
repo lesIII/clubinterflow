@@ -39,6 +39,7 @@ model Node {
 
 model Edge {
   id        Int      @id @default(autoincrement())
+  token     String?
   source    Int
   target    Int
   label     String?
@@ -48,6 +49,7 @@ model Edge {
   stroke    String?
   markerEnd Json
   due       Int?
+  deadline      DateTime?
   event     Event    @relation(fields: [eventId], references: [id])
   eventId   Int
   createdAt DateTime @default(now())
