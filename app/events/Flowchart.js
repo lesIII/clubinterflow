@@ -30,6 +30,7 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
 
     const [nodesWithProps, setNodesWithProps] = useState([]);
     const [maxId, setMaxId] = useState(0);
+    const [localNodesCounter, setLocalNodesCounter] = useState(0);
     const [allEdges, setAllEdges] = useState([]);
     const [edgesFetched, setEdgesFetched] = useState(false);
 
@@ -53,6 +54,7 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
             .then(nodes => {
                 const currentMaxId = nodes.length > 0 ? Math.max(...nodes.map(node => parseInt(node.id))) : 0;
                 setMaxId(currentMaxId);
+                setLocalNodesCounter(0);
             })
             .catch(error => console.error('Error fetching nodes:', error));
     }
@@ -135,13 +137,14 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
     const onAdd = useCallback(() => {
         const newId = maxId + 1;
         setMaxId(newId);
+        setLocalNodesCounter(localNodesCounter + 1);
         setNodes((currentNodes) => {
             const newNode = {
                 id: `${newId}`,
                 data: { label: 'President' },
                 position: {
-                    x: Math.floor(Math.random() * 400) - 200,
-                    y: Math.floor(Math.random() * 400) - 200,
+                    x: 20 * localNodesCounter, //Math.floor(Math.random() * 400) - 200,
+                    y: 20 * localNodesCounter //Math.floor(Math.random() * 400) - 200,
                 },
                 type: 'custom'
             };
@@ -172,9 +175,12 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
             <Controls
                 showInteractive={false}
             />
-            <Panel position="top-right">
-                <button onClick={onAdd}><h1 className="text-3xl text-green-500">+</h1></button>
-            </Panel>
+            { editorMode ? (
+                <Panel position="top-right">
+                    <button onClick={onAdd}><h1 className="text-3xl text-green-500">+</h1></button>
+                </Panel>
+            ) : <></>
+            }
         </ReactFlow>
     );
 }

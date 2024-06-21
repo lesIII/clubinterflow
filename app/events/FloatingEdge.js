@@ -42,6 +42,9 @@ function FloatingEdge({ id, source, target, markerEnd, style, label, selected })
 
     const handleOpenModal = () => {
         setIsOpen(true);
+        if (document.activeElement) {
+            document.activeElement.blur();
+        }
     };
 
     const setEdge = useCallback(() => {

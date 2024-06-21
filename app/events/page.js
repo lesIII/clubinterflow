@@ -25,10 +25,14 @@ import dayjs from "dayjs"
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 
 import { useUser } from '@clerk/clerk-react';
+import {green} from "@mui/material/colors";
 
 const darkTheme = createTheme({
     palette: {
         mode: 'dark',
+        primary: {
+            main: green[400],
+        },
     },
 });
 
@@ -47,11 +51,27 @@ export default function EventPage() {
     const [isLoadingFlow, setIsLoadingFlow] = useState(false);
     const { user } = useUser();
     const [editor, setEditor] = useState(false);
+    const [isModalButtonDisabled, setIsModalButtonDisabled] = useState(false);
+    const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(false);
+    const [isDeleteButtonDisabled, setIsDeleteButtonDisabled] = useState(false);
+    const [isCancelButtonDisabled, setIsCancelButtonDisabled] = useState(false);
 
     const roleValue = React.useMemo(
         () => Array.from(roleKeys).join(", ").replaceAll("_", " "),
         [roleKeys]
     );
+    
+    const changeEditButtonStates = (direction) => {
+        if (direction === 'disable') {
+            setIsSaveButtonDisabled(true)
+            setIsDeleteButtonDisabled(true)
+            setIsCancelButtonDisabled(true)
+        } else {
+            setIsSaveButtonDisabled(false)
+            setIsDeleteButtonDisabled(false)
+            setIsCancelButtonDisabled(false)
+        }
+    }
 
     const fetchEvents = async () => {
         await fetch('/api/events', {
@@ -70,6 +90,7 @@ export default function EventPage() {
     }, []);
 
     const fetchEvent = async (eventId) => {
+        setEditorMode(false)
         setIsLoadingFlow(true);
         setShowTable(false)
         setEvent([]);
@@ -103,10 +124,11 @@ export default function EventPage() {
                 console.error('Error fetching graph data:', error)
                 setIsLoadingFlow(false);
             })
-        setEditorMode(false)
+        changeEditButtonStates('enable')
     };
 
     const saveEvent = async () => {
+        changeEditButtonStates('disable')
         await fetch(`/api/events`, {
             method: 'PUT',
             headers: {
@@ -127,6 +149,7 @@ export default function EventPage() {
                     source: parseInt(edge.source),
                     target: parseInt(edge.target),
                     style: edge.style,
+                    markerEnd: edge.markerEnd,
                     ...edge,
                 }))
             })
@@ -140,6 +163,7 @@ export default function EventPage() {
             .catch(error => console.error('Error updating event:', error));
         fetchEvent(event.id)
         fetchEvents()
+        changeEditButtonStates('enable')
     };
 
     const editEvent = () => {
@@ -147,6 +171,7 @@ export default function EventPage() {
     }
 
     const handleFormSubmit = async () => {
+        changeEditButtonStates('disable')
         await fetch(`/api/event`, {
             method: 'POST',
             headers: {
@@ -166,7 +191,7 @@ export default function EventPage() {
             })
             .catch(error => console.error('Error creating event:', error));
         await fetchEvents();
-        setIsModalOpen(false);
+        changeEditButtonStates('enable')
     };
 
     const handleInputChange = (e) => {
@@ -205,6 +230,7 @@ export default function EventPage() {
     };
 
     const deleteEvent = async () => {
+        changeEditButtonStates('disable')
         await fetch(`/api/events?eventId=${event.id}`, {
             method: 'DELETE'
         })
@@ -214,6 +240,7 @@ export default function EventPage() {
                 } else {
                     throw new Error('Failed to delete event');
                 }
+                changeEditButtonStates('enable')
             })
             .catch(error => console.error('Error deleting event:', error));
     };
@@ -223,15 +250,16 @@ export default function EventPage() {
             <h1 className={`${title()} mb-5`}>Workflow</h1>
             {showTable ? (
                 <>
-                    <Button color="success"variant="ghost" size="md" onClick={() => setIsModalOpen(true)}>Create Event</Button>
+                    <Button color="success" radius="full" variant="ghost" size="md" onClick={() => setIsModalOpen(true)}>Create Event</Button>
                     <Modal isOpen={isModalOpen} isDismissable={false} onClose={() => setIsModalOpen(false)}>
                         <ModalContent>
                             <ModalHeader>Create Event</ModalHeader>
                             <ModalBody>
                                 <Input
                                     name="name"
-                                    placeholder="Event Name"
+                                    label="Event name"
                                     onChange={handleInputChange}
+                                    variant="underlined"
                                 />
                                 <ThemeProvider theme={darkTheme}>
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -254,7 +282,7 @@ export default function EventPage() {
                                         </Button>
                                     </DropdownTrigger>
                                     <DropdownMenu
-                                        aria-label="Multiple selection example"
+                                        aria-label="Select who can edit the event"
                                         variant="flat"
                                         closeOnSelect={false}
                                         disallowEmptySelection
@@ -270,7 +298,7 @@ export default function EventPage() {
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="danger" variant="flat" onClick={() => setIsModalOpen(false)}>Close</Button>
-                                <Button color="success" onClick={handleFormSubmit}>Save</Button>
+                                <Button isDisabled={isModalButtonDisabled} color="success" onClick={handleFormSubmit}>Save</Button>
                             </ModalFooter>
                         </ModalContent>
                     </Modal>
@@ -285,7 +313,7 @@ export default function EventPage() {
                             ))}
                         </TableHeader>
                         <TableBody isLoading={isLoading}
-                                   loadingContent={<Spinner color="success" />}>
+                                   loadingContent={<Spinner className="pt-12" color="success" />}>
                             <TableRow>
                                 <TableCell>{new Date().getFullYear()}</TableCell>
                                 {renderTableCells()}
@@ -308,7 +336,11 @@ export default function EventPage() {
                             />
                             <ThemeProvider theme={darkTheme}>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DateTimePicker value={dateTime} onChange={(newValue) => setDateTime(newValue)}/>
+                                    <MobileDateTimePicker
+                                        name="datetime"
+                                        value={dateTime}
+                                        onChange={(newValue) => setDateTime(newValue)}
+                                    />
                                 </LocalizationProvider>
                             </ThemeProvider>
 
@@ -341,8 +373,8 @@ export default function EventPage() {
                         <div className="flex gap-4 items-center mr-4">
                             {editorMode ? (
                                 <React.Fragment>
-                                    <Button className="items-center text-center justify-center" size="sm" isIconOnly
-                                            color="success" variant="faded" aria-label="Save" onClick={saveEvent}>
+                                    <Button isDisabled={isSaveButtonDisabled} className="items-center text-center justify-center" size="sm" isIconOnly
+                                            color="success" variant="light" aria-label="Save" onClick={saveEvent}>
                                         <Image
                                             src="/save.svg"
                                             width={18}
@@ -351,8 +383,8 @@ export default function EventPage() {
                                             className="filter-green"
                                         />
                                     </Button>
-                                    <Button className="items-center text-center justify-center" size="sm" isIconOnly
-                                            color="success" variant="faded" aria-label="Delete" onClick={deleteEvent}>
+                                    <Button isDisabled={isDeleteButtonDisabled} className="items-center text-center justify-center" size="sm" isIconOnly
+                                            color="success" variant="light" aria-label="Delete" onClick={deleteEvent}>
                                         <Image
                                             src="/delete.svg"
                                             width={18}
@@ -361,9 +393,12 @@ export default function EventPage() {
                                             className="filter-green"
                                         />
                                     </Button>
-                                    <Button className="items-center text-center justify-center" size="sm" isIconOnly
-                                            color="success" variant="faded" aria-label="Cancel"
-                                            onClick={() => fetchEvent(event.id)}>
+                                    <Button isDisabled={isCancelButtonDisabled} className="items-center text-center justify-center" size="sm" isIconOnly
+                                            color="success" variant="light" aria-label="Cancel"
+                                            onClick={() => {
+                                                changeEditButtonStates('disable')
+                                                fetchEvent(event.id)}
+                                                }>
                                         <Image
                                             src="/cancel.svg"
                                             width={18}
@@ -375,9 +410,9 @@ export default function EventPage() {
                                 </React.Fragment>
                             ) : (
                                 <>
-                                { editor && (
+                                { editor && !isLoadingFlow && (
                                     <Button className="items-center text-center justify-center" size="sm" isIconOnly
-                                            color="success" variant="faded" aria-label="Edit" onClick={editEvent}>
+                                            color="success" variant="light" aria-label="Edit" onClick={editEvent}>
                                         <Image
                                             src="/edit.svg"
                                             width={18}

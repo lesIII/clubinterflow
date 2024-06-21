@@ -14,7 +14,7 @@ import {
 
 import {Managers} from "../roles";
 
-function CustomNode({ data }) {
+function CustomNode({ data, isConnectable }) {
 
     const { getNode, setNodes, setEdges } = useReactFlow();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -57,7 +57,7 @@ function CustomNode({ data }) {
                 </ButtonGroup>
             </NodeToolbar>
             {data.label}
-            <Handle type="source" position={Position.Right} id="a" className="react-flow__handle .react-flow__handle-right" />
+            <Handle isConnectable={isConnectable} type="source" position={Position.Right} id="a" className="react-flow__handle .react-flow__handle-right" />
             <Modal isOpen={isOpen} onOpenChange={onClose} placement="top-center">
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1">Manager</ModalHeader>
