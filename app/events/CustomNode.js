@@ -48,14 +48,17 @@ function CustomNode({ data, isConnectable }) {
     
     return (
         <>
-            <NodeToolbar
-                position={data.toolbarPosition}
-            >
-                <ButtonGroup>
-                    <Button onPress={onOpen} color="success" variant="ghost" size="sm" radius="full">Set manager</Button>
-                    <Button onPress={deleteNode} color="success" variant="ghost" size="sm" radius="full">Delete</Button>
-                </ButtonGroup>
-            </NodeToolbar>
+            {data.editorMode ? (
+                <NodeToolbar
+                    position={data.toolbarPosition}
+                >
+                    <ButtonGroup>
+                        <Button onPress={onOpen} color="success" variant="ghost" size="sm" radius="full">Set manager</Button>
+                        <Button onPress={deleteNode} color="success" variant="ghost" size="sm" radius="full">Delete</Button>
+                    </ButtonGroup>
+                </NodeToolbar>
+            ) : <></>}
+
             {data.label}
             <Handle isConnectable={isConnectable} type="source" position={Position.Right} id="a" className="react-flow__handle .react-flow__handle-right" />
             <Modal isOpen={isOpen} onOpenChange={onClose} placement="top-center">

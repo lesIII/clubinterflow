@@ -72,11 +72,12 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
                     ...node.data,
                     id: node.id,
                     setNodes: setNodes,
-                    setEdges: setEdges
+                    setEdges: setEdges,
+                    editorMode: editorMode
                 }
             })));
         }
-    }, [nodes, setNodes, setEdges]);
+    }, [nodes, setNodes, setEdges, editorMode]);
 
     const edgeUpdateSuccessful = useRef(true);
 
