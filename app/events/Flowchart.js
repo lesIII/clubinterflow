@@ -139,6 +139,7 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
         const newId = maxId + 1;
         setMaxId(newId);
         setLocalNodesCounter(localNodesCounter + 1);
+        console.log(maxId, localNodesCounter)
         setNodes((currentNodes) => {
             const newNode = {
                 id: `${newId}`,
