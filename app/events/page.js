@@ -171,7 +171,7 @@ export default function EventPage() {
     }
 
     const handleFormSubmit = async () => {
-        changeEditButtonStates('disable')
+        setIsModalButtonDisabled(true)
         await fetch(`/api/event`, {
             method: 'POST',
             headers: {
@@ -191,7 +191,8 @@ export default function EventPage() {
             })
             .catch(error => console.error('Error creating event:', error));
         await fetchEvents();
-        changeEditButtonStates('enable')
+        setIsModalOpen(false)
+        setIsModalButtonDisabled(false)
     };
 
     const handleInputChange = (e) => {
@@ -236,13 +237,13 @@ export default function EventPage() {
         })
             .then(response => {
                 if (response.ok) {
-                    location.reload();
+                    location.reload()
                 } else {
                     throw new Error('Failed to delete event');
                 }
-                changeEditButtonStates('enable')
             })
             .catch(error => console.error('Error deleting event:', error));
+        changeEditButtonStates('enable')
     };
 
     return (
