@@ -24,36 +24,43 @@ export const metadata = {
 
 const clerk_pub_key = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
-export default function RootLayout({
-									   children,
-								   }) {
+export default function RootLayout({ children }) {
 	return (
-		React.createElement(ClerkProvider, {
-				appearance: {
-					baseTheme: dark,
-					variables: {
-						colorPrimary: "#B7D660",
-					}
-				},
-				publishableKey: clerk_pub_key
-			},
-			React.createElement("html", { lang: "en", suppressHydrationWarning: true },
-				React.createElement("head", null, React.createElement("title", null, "ClubInterFlow")),
-				React.createElement("body", { className: clsx("min-h-screen font-sans antialiased", fontSans.variable) },
-					React.createElement(Providers, { themeProps: { attribute: "class", defaultTheme: "dark"} },
-						React.createElement("div", { className: "flex flex-col min-h-screen" },
-							React.createElement(NavbarComponent, null),
-							React.createElement("main", { className: "container mx-auto max-w-7xl pt-6 px-6 flex-grow" }, children),
-							React.createElement("footer", { className: "w-full flex items-center justify-center py-3 align-bottom" },
-								React.createElement(Link, { isExternal: true, className: "flex items-center gap-1 text-current", href: "https://www.linkedin.com/in/lászló-gulyás-630407246/", title: "linkedin.com/in/lászló-gulyás-630407246" },
-									React.createElement("span", { className: "text-default-600" }, "Created by"),
-									React.createElement("p", { className: "text-success" }, "László Gulyás")
-								)
-							)
-						)
-					)
-				)
-			)
-		)
+		<ClerkProvider
+		appearance={{
+			baseTheme: dark,
+			variables: {
+				colorPrimary: "#B7D660",
+			}
+		}}
+		publishableKey={clerk_pub_key}
+		>
+			<html lang="en">
+			<head>
+				<title>ClubInterFlow</title>
+			</head>
+			<body className={clsx("min-h-screen font-sans antialiased", fontSans.variable)}>
+			<Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+				<div className="flex flex-col min-h-screen">
+					<NavbarComponent />
+					<main className="container mx-auto max-w-7xl pt-6 px-6 flex-grow">
+						{children}
+					</main>
+					<footer className="w-full flex items-center justify-center py-3 align-bottom">
+						<Link
+							isExternal
+							className="flex items-center gap-1 text-current"
+							href="https://www.linkedin.com/in/lászló-gulyás-630407246/"
+							title="linkedin.com/in/lászló-gulyás-630407246"
+						>
+							<span className="text-default-600">Created by</span>
+							<p className="text-success">László Gulyás</p>
+						</Link>
+					</footer>
+				</div>
+			</Providers>
+			</body>
+			</html>
+		</ClerkProvider>
 	);
 }

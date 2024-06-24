@@ -1,7 +1,5 @@
 'use client'
 
-
-import {Button} from "@nextui-org/button";
 import {UserButton} from "@clerk/nextjs";
 import {
     Navbar,
@@ -20,14 +18,13 @@ import {siteConfig} from "../config/site";
 import NextLink from "next/link";
 import clsx from "clsx";
 
-import React, { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import React from "react";
+import { usePathname } from "next/navigation";
 
 import {ThemeSwitch} from "./theme-switch";
 import {
     InstagramIcon,
     FacebookIcon,
-    HeartFilledIcon,
     DriveIcon,
     Logo
 } from "./icons"
@@ -35,12 +32,7 @@ import {
 export default function NavbarComponent() {
 
 	const pathname = usePathname()
-	const [currentPath, setCurrentPath] = useState('');
     const [isMenuOpen, setIsMenuOpen] = React.useReducer((current) => !current, false);
-
-	useEffect(() => {
-		setCurrentPath(pathname);
-	}, [pathname]);
 
 	return (
         <Navbar isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen} maxWidth="xl" position="sticky" className="bg-background/0" >
@@ -51,7 +43,7 @@ export default function NavbarComponent() {
             </NavbarBrand>
             <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
 
-                <ul className="hidden lg:flex gap-4 justify-start ml-2">
+                <ul className="hidden sm:flex gap-4 justify-start ml-2">
                     {siteConfig.navItems.map((item) => (
                         <NavbarItem key={item.href}>
                             <NextLink
@@ -90,18 +82,6 @@ export default function NavbarComponent() {
                     <ThemeSwitch/>
                 </NavbarItem>
                 <NavbarItem className="hidden sm:flex">
-                    <Button
-                        isExternal
-                        as={Link}
-                        className="text-sm font-normal text-default-600 bg-default-100"
-                        href={siteConfig.links.sponsor}
-                        startContent={<HeartFilledIcon className="text-danger"/>}
-                        variant="flat"
-                    >
-                        Sponsor
-                    </Button>
-                </NavbarItem>
-                <NavbarItem className="hidden sm:flex">
                     <UserButton/>
                 </NavbarItem>
             </NavbarContent>
@@ -119,8 +99,8 @@ export default function NavbarComponent() {
                             <Link
                                 color={
                                     item.href === pathname
-                                        ? "success" // Set color to success if it matches the current page path
-                                        : "foreground" // Otherwise, set color to foreground
+                                        ? "success"
+                                        : "foreground"
                                 }
                                 href={item.href}
                                 size="lg"
@@ -141,18 +121,6 @@ export default function NavbarComponent() {
                     <Link isExternal href={siteConfig.links.drive} aria-label="Google Drive">
                         <DriveIcon className="text-default-500"/>
                     </Link>
-                </div>
-                <div className="mx-4 mt-2 flex gap-4 items-center">
-                    <Button
-                        isExternal
-                        as={Link}
-                        className="text-sm font-normal text-default-600 bg-default-100"
-                        href={siteConfig.links.sponsor}
-                        startContent={<HeartFilledIcon className="text-danger"/>}
-                        variant="flat"
-                    >
-                        Sponsor
-                    </Button>
                 </div>
             </NavbarMenu>
 

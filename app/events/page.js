@@ -19,12 +19,12 @@ import {
 import Image from 'next/image'
 import { Managers } from '../roles';
 
-import { DateTimePicker, MobileDateTimePicker, LocalizationProvider  } from '@mui/x-date-pickers'
+import { MobileDateTimePicker, LocalizationProvider  } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from "dayjs"
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@clerk/nextjs';
 import {green} from "@mui/material/colors";
 
 const darkTheme = createTheme({
@@ -251,7 +251,8 @@ export default function EventPage() {
             <h1 className={`${title()} mb-5`}>Workflow</h1>
             {showTable ? (
                 <>
-                    <Button color="success" radius="full" variant="ghost" size="md" onClick={() => setIsModalOpen(true)}>Create Event</Button>
+                    <Button color="success" radius="full" variant="ghost" size="md"
+                            onClick={() => setIsModalOpen(true)}>Create Event</Button>
                     <Modal isOpen={isModalOpen} isDismissable={false} onClose={() => setIsModalOpen(false)}>
                         <ModalContent>
                             <ModalHeader>Create Event</ModalHeader>
@@ -268,7 +269,7 @@ export default function EventPage() {
                                             defaultValue={dayjs()}
                                             name="date"
                                             value={newEvent.date}
-                                            onChange={(newValue) => setNewEvent({ ...newEvent, date: newValue })}
+                                            onChange={(newValue) => setNewEvent({...newEvent, date: newValue})}
                                         />
                                     </LocalizationProvider>
                                 </ThemeProvider>
@@ -298,8 +299,10 @@ export default function EventPage() {
                                 </Dropdown>
                             </ModalBody>
                             <ModalFooter>
-                                <Button color="danger" variant="flat" onClick={() => setIsModalOpen(false)}>Close</Button>
-                                <Button isDisabled={isModalButtonDisabled} color="success" onClick={handleFormSubmit}>Save</Button>
+                                <Button color="danger" variant="flat"
+                                        onClick={() => setIsModalOpen(false)}>Close</Button>
+                                <Button isDisabled={isModalButtonDisabled} color="success"
+                                        onClick={handleFormSubmit}>Save</Button>
                             </ModalFooter>
                         </ModalContent>
                     </Modal>
@@ -314,7 +317,7 @@ export default function EventPage() {
                             ))}
                         </TableHeader>
                         <TableBody isLoading={isLoading}
-                                   loadingContent={<Spinner className="pt-12" color="success" />}>
+                                   loadingContent={<Spinner className="pt-12" color="success"/>}>
                             <TableRow>
                                 <TableCell>{new Date().getFullYear()}</TableCell>
                                 {renderTableCells()}
@@ -374,7 +377,8 @@ export default function EventPage() {
                         <div className="flex gap-4 items-center mr-4">
                             {editorMode ? (
                                 <React.Fragment>
-                                    <Button isDisabled={isSaveButtonDisabled} className="items-center text-center justify-center" size="sm" isIconOnly
+                                    <Button isDisabled={isSaveButtonDisabled}
+                                            className="items-center text-center justify-center" size="sm" isIconOnly
                                             color="success" variant="light" aria-label="Save" onClick={saveEvent}>
                                         <Image
                                             src="/save.svg"
@@ -384,7 +388,8 @@ export default function EventPage() {
                                             className="filter-green"
                                         />
                                     </Button>
-                                    <Button isDisabled={isDeleteButtonDisabled} className="items-center text-center justify-center" size="sm" isIconOnly
+                                    <Button isDisabled={isDeleteButtonDisabled}
+                                            className="items-center text-center justify-center" size="sm" isIconOnly
                                             color="success" variant="light" aria-label="Delete" onClick={deleteEvent}>
                                         <Image
                                             src="/delete.svg"
@@ -394,12 +399,14 @@ export default function EventPage() {
                                             className="filter-green"
                                         />
                                     </Button>
-                                    <Button isDisabled={isCancelButtonDisabled} className="items-center text-center justify-center" size="sm" isIconOnly
+                                    <Button isDisabled={isCancelButtonDisabled}
+                                            className="items-center text-center justify-center" size="sm" isIconOnly
                                             color="success" variant="light" aria-label="Cancel"
                                             onClick={() => {
                                                 changeEditButtonStates('disable')
-                                                fetchEvent(event.id)}
-                                                }>
+                                                fetchEvent(event.id)
+                                            }
+                                            }>
                                         <Image
                                             src="/cancel.svg"
                                             width={18}
@@ -411,23 +418,23 @@ export default function EventPage() {
                                 </React.Fragment>
                             ) : (
                                 <>
-                                { editor && !isLoadingFlow && (
-                                    <Button className="items-center text-center justify-center" size="sm" isIconOnly
-                                            color="success" variant="light" aria-label="Edit" onClick={editEvent}>
-                                        <Image
-                                            src="/edit.svg"
-                                            width={18}
-                                            height={18}
-                                            alt="Edit event"
-                                            className="filter-green"
-                                        />
-                                    </Button>
-                                ) }</>
+                                    {editor && !isLoadingFlow && (
+                                        <Button className="items-center text-center justify-center" size="sm" isIconOnly
+                                                color="success" variant="light" aria-label="Edit" onClick={editEvent}>
+                                            <Image
+                                                src="/edit.svg"
+                                                width={18}
+                                                height={18}
+                                                alt="Edit event"
+                                                className="filter-green"
+                                            />
+                                        </Button>
+                                    )}</>
                             )}
                         </div>
                     </div>
                     {isLoadingFlow ? (
-                        <Spinner color="success" />
+                        <Spinner color="success"/>
                     ) : (
                         <Flow event={event} nodes={nodes} edges={edges} setNodes={setNodes} setEdges={setEdges}
                               editorMode={editorMode}/>
@@ -435,4 +442,5 @@ export default function EventPage() {
                 </React.Fragment>
             )}
         </div>
-    )}
+    )
+}

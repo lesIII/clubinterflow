@@ -1,17 +1,17 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
+
 import ReactFlow, {
     Background,
     Controls,
     applyEdgeChanges,
     applyNodeChanges,
     addEdge,
-    NodeToolbar,
     updateEdge,
-    MarkerType,
     ConnectionMode, Panel
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import {CircularProgress} from "@nextui-org/react";
+
+import toast, { Toaster } from 'react-hot-toast';
 
 import FloatingEdge from "./FloatingEdge"
 import FloatingConnectionLine from './FloatingConnectionLine'
@@ -139,7 +139,7 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
         const newId = maxId + 1;
         setMaxId(newId);
         setLocalNodesCounter(localNodesCounter + 1);
-        console.log(maxId, localNodesCounter)
+
         setNodes((currentNodes) => {
             const newNode = {
                 id: `${newId}`,
@@ -154,36 +154,62 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
         });
     }, [maxId]);
 
+    useEffect(() => {
+        if (editorMode && searchDuplicates()) {
+            notify();
+        } else {
+            toast.dismiss();
+        }
+    }, [nodes.map(node => node.data.label).toString(), editorMode]);
+
+    const searchDuplicates = () => {
+        return nodes.some((node, index) => {
+            return nodes.slice(index + 1).some(node2 => node.data.label === node2.data.label);
+        });
+    }
+
+    const notify = () => toast.loading('Adding 2 nodes of the same manager will result in duplicate e-mail notifications.', {
+        position: "bottom-left",
+        id: 'duplicate-notification',
+        icon: '⚠️',
+        style: {
+            background: '#FFF5CF'
+        }
+    })
+
 
     return (
-        <ReactFlow
-            nodes={nodesWithProps}
-            onNodesChange={onNodesChange}
-            edges={edges}
-            onEdgesChange={onEdgesChange}
-            onEdgeUpdate={onEdgeUpdate}
-            onEdgeUpdateStart={onEdgeUpdateStart}
-            onEdgeUpdateEnd={onEdgeUpdateEnd}
-            onConnect={onConnect}
-            fitView
-            edgeTypes={edgeTypes}
-            nodeTypes={nodeTypes}
-            connectionLineComponent={FloatingConnectionLine}
-            nodesDraggable={editorMode}
-            nodesConnectable={editorMode}
-            connectionMode={ConnectionMode.Loose}
-        >
-            <Background/>
-            <Controls
-                showInteractive={false}
-            />
-            { editorMode ? (
-                <Panel position="top-right">
-                    <button onClick={onAdd}><h1 className="text-3xl text-green-500">+</h1></button>
-                </Panel>
-            ) : <></>
-            }
-        </ReactFlow>
+        <>
+            <Toaster/>
+            <ReactFlow
+                nodes={nodesWithProps}
+                onNodesChange={onNodesChange}
+                edges={edges}
+                onEdgesChange={onEdgesChange}
+                onEdgeUpdate={onEdgeUpdate}
+                onEdgeUpdateStart={onEdgeUpdateStart}
+                onEdgeUpdateEnd={onEdgeUpdateEnd}
+                onConnect={onConnect}
+                fitView
+                edgeTypes={edgeTypes}
+                nodeTypes={nodeTypes}
+                connectionLineComponent={FloatingConnectionLine}
+                nodesDraggable={editorMode}
+                nodesConnectable={editorMode}
+                connectionMode={ConnectionMode.Loose}
+            >
+                <Background/>
+                <Controls
+                    showInteractive={false}
+                />
+                {editorMode ? (
+                    <Panel position="top-right">
+                        <button onClick={onAdd}><h1 className="text-3xl text-green-500">+</h1></button>
+                    </Panel>
+                ) : <></>
+                }
+            </ReactFlow>
+        </>
     );
 }
 
