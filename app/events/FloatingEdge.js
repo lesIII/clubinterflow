@@ -20,7 +20,7 @@ function FloatingEdge({ id, source, target, markerEnd, style, label, selected })
 
     const fetchEdge = async () => {
         try {
-            const response = await fetch(`/api/edges?edgeId=${id}`);
+            const response = await fetch(`/api/edge?edgeId=${id}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -31,17 +31,32 @@ function FloatingEdge({ id, source, target, markerEnd, style, label, selected })
             setHours( Math.floor((edgeData.due % 1440) / 60));
             setMinutes(Math.floor(edgeData.due % 60));
             setEdgeLabel(edgeData.label)
+            setIsOpen(true)
         } catch (error) {
             console.error('Failed to fetch edge:', error);
         }
     };
 
     useEffect(() => {
-        fetchEdge();
+        const fetchAllEdges = async () => {
+            await fetch('/api/edges', {
+                method: 'GET'
+            })
+                .then(response => response.json())
+                .then(edges => {
+                    // Check if the edge id is in the list of edges
+                    if (edges.some(edge => edge.id === id)) {
+                        // If it is, fetch the edge
+                        fetchEdge();
+                    }
+                })
+                .catch(error => console.error('Error fetching edges:', error));
+        }
+        fetchAllEdges();
     }, []);
 
     const handleOpenModal = () => {
-        setIsOpen(true);
+        fetchEdge();
         if (document.activeElement) {
             document.activeElement.blur();
         }
@@ -83,7 +98,6 @@ function FloatingEdge({ id, source, target, markerEnd, style, label, selected })
     const handleSave = () => {
         setEdge();
         setIsOpen(false);
-        console.log(databaseEdge)
     };
 
     const deleteEdge = useCallback(() => {

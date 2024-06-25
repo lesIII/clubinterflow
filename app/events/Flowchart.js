@@ -105,7 +105,6 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
             const maxAllEdges = Math.max(...allEdges.map(edge => edge.id));
             const maxEdges = Math.max(...edges.map(edge => edge.id));
             const newId = maxAllEdges > maxEdges ? maxAllEdges : maxEdges;
-            console.log(newId)
             setEdges((eds) =>
                 addEdge({
                     ...params,
@@ -173,7 +172,8 @@ function Flow({nodes, edges, setNodes, setEdges, editorMode, event}) {
         id: 'duplicate-notification',
         icon: '⚠️',
         style: {
-            background: '#FFF5CF'
+            background: '#FFF5CF',
+            minWidth: '400px',
         }
     })
 
